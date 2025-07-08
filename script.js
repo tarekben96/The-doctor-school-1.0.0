@@ -12,27 +12,35 @@ let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || {
 let savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]');
 const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
-// ================ تهيئة الصفحة والنقل بين الأقسام ================
-window.addEventListener('DOMContentLoaded', function () {
-    renderDashboard();
-    renderReports();
-    renderSettings();
-    document.getElementById('showDashboardBtn').onclick = () => showSection('dashboard');
-    document.getElementById('showReportsBtn').onclick = () => showSection('reports');
-    document.getElementById('showSettingsBtn').onclick = () => showSection('settings');
-    showSection('dashboard');
+// ================ تهيئة الصفحة والتنقل بين الأقسام ================
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('dashboardBtn').onclick = function() {
+        showSection('dashboardSection');
+    };
+    document.getElementById('reportsBtn').onclick = function() {
+        showSection('reportsSection');
+    };
+    document.getElementById('settingsBtn').onclick = function() {
+        showSection('settingsSection');
+    };
+    // أظهر لوحة التحكم افتراضيًا
+    showSection('dashboardSection');
 });
 
-function showSection(id) {
-    ['dashboard','reports','settings'].forEach(sec => {
-        document.getElementById(sec).classList.toggle('hidden', sec!==id);
-    });
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('ring-2'));
-    if(id==='dashboard') document.getElementById('showDashboardBtn').classList.add('ring-2','ring-indigo-300');
-    if(id==='reports') document.getElementById('showReportsBtn').classList.add('ring-2','ring-indigo-300');
-    if(id==='settings') document.getElementById('showSettingsBtn').classList.add('ring-2','ring-indigo-300');
-}
+function showSection(sectionId) {
+    // أخفِ كل الأقسام أولاً
+    document.getElementById('dashboardSection').style.display = 'none';
+    document.getElementById('reportsSection').style.display = 'none';
+    document.getElementById('settingsSection').style.display = 'none';
+    document.getElementById('traineesTableSection').style.display = 'none';
 
+    // أظهر القسم المطلوب فقط
+    document.getElementById(sectionId).style.display = '';
+    // إذا اخترت لوحة التحكم، أظهر الجدول أيضًا
+    if(sectionId === 'dashboardSection') {
+        document.getElementById('traineesTableSection').style.display = '';
+    }
+}
 // ================ لوحة التحكم ================
 function renderDashboard() {
     let html = `
