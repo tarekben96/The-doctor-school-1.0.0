@@ -123,7 +123,6 @@ function updateTraineesTable() {
             <button class="text-red-600" onclick="window.deleteTrainee('${t.id}')"><i class="fas fa-trash-alt"></i></button>
             <button class="text-green-600" onclick="window.printReceipt('${t.id}')"><i class="fas fa-print"></i></button>
         </td>
-        </td>
     `;
     tbody.appendChild(tr);
 });
