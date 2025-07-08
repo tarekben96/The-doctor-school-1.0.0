@@ -1,4 +1,4 @@
-// تهيئة البيانات من localStorage أو القيم الافتراضية
+// ================== تهيئة البيانات ==================
 let trainees = JSON.parse(localStorage.getItem('trainees')) || [];
 let specialties = JSON.parse(localStorage.getItem('specialties')) || [
     'تطوير الويب', 'تصميم جرافيك', 'محاسبة', 'إدارة أعمال', 'لغات أجنبية'
@@ -9,136 +9,158 @@ let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || {
     phone: '0123456789',
     email: 'info@doctorsschool.dz'
 };
-
 const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
-// مثال: تحديث قائمة التخصصات في الإعدادات
-function updateSpecialtiesList() {
-    const traineeSpecialtySelect = document.getElementById('traineeSpecialty');
-    if (traineeSpecialtySelect) {
-        traineeSpecialtySelect.innerHTML = '';
-        specialties.forEach(specialty => {
-            const option = document.createElement('option');
-            option.value = specialty;
-            option.textContent = specialty;
-            traineeSpecialtySelect.appendChild(option);
-        });
-    }
-    const filterSpecialtySelect = document.getElementById('filterSpecialty');
-    if (filterSpecialtySelect) {
-        filterSpecialtySelect.innerHTML = '<option value="">جميع التخصصات</option>';
-        specialties.forEach(specialty => {
-            const option = document.createElement('option');
-            option.value = specialty;
-            option.textContent = specialty;
-            filterSpecialtySelect.appendChild(option);
-        });
-    }
-    const specialtiesList = document.getElementById('specialtiesList');
-    if (specialtiesList) {
-        specialtiesList.innerHTML = '';
-        specialties.forEach(specialty => {
-            const div = document.createElement('div');
-            div.className = 'flex justify-between items-center py-2 border-b border-gray-200 last:border-0';
-            div.innerHTML = `<span>${specialty}</span>
-            <button class="text-red-600 hover:text-red-800" onclick="removeSpecialty('${specialty}')">
-                <i class="fas fa-trash-alt"></i>
-            </button>`;
-            specialtiesList.appendChild(div);
-        });
-    }
+// ================== تهيئة الصفحة ==================
+window.addEventListener('DOMContentLoaded', function () {
+    renderDashboard();
+    renderReports();
+    renderSettings();
+    // تفعيل التنقل بين الأقسام
+    document.getElementById('showDashboardBtn').onclick = () => showSection('dashboard');
+    document.getElementById('showReportsBtn').onclick = () => showSection('reports');
+    document.getElementById('showSettingsBtn').onclick = () => showSection('settings');
+    showSection('dashboard');
+});
+
+function showSection(id) {
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('reports').classList.add('hidden');
+    document.getElementById('settings').classList.add('hidden');
+    document.getElementById(id).classList.remove('hidden');
 }
 
-// إضافة تخصص جديد
-document.getElementById('addSpecialtyBtn')?.addEventListener('click', function () {
-    const newSpecialty = document.getElementById('newSpecialty').value.trim();
-    if (newSpecialty && !specialties.includes(newSpecialty)) {
-        specialties.push(newSpecialty);
-        localStorage.setItem('specialties', JSON.stringify(specialties));
-        updateSpecialtiesList();
-        document.getElementById('newSpecialty').value = '';
+// ================== لوحة التحكم ==================
+function renderDashboard() {
+    let html = `
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">إدارة المتربصين</h2>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 sm:space-x-reverse">
+                <button id="addTraineeBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                    <i class="fas fa-plus ml-1"></i> إضافة متربص جديد
+                </button>
+            </div>
+        </div>
+        <div class="mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                <div class="w-full md:w-1/3 mb-4 md:mb-0">
+                    <label for="searchTrainee" class="block text-gray-700 mb-2">بحث عن متربص</label>
+                    <input type="text" id="searchTrainee" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="اكتب اسم المتربص أو رقم التسجيل...">
+                </div>
+                <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mx-4">
+                    <label for="filterSpecialty" class="block text-gray-700 mb-2">تصفية حسب التخصص</label>
+                    <select id="filterSpecialty" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"></select>
+                </div>
+                <div class="w-full md:w-1/3">
+                    <label for="filterMonth" class="block text-gray-700 mb-2">تصفية حسب الشهر</label>
+                    <select id="filterMonth" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="0">جميع الأشهر</option>
+                        <option value="1">جانفي</option>
+                        <option value="2">فيفري</option>
+                        <option value="3">مارس</option>
+                        <option value="4">أفريل</option>
+                        <option value="5">ماي</option>
+                        <option value="6">جوان</option>
+                        <option value="7">جويلية</option>
+                        <option value="8">أوت</option>
+                        <option value="9">سبتمبر</option>
+                        <option value="10">أكتوبر</option>
+                        <option value="11">نوفمبر</option>
+                        <option value="12">ديسمبر</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-4 py-3 text-right text-gray-700">#</th>
+                        <th class="px-4 py-3 text-right text-gray-700">رقم التسجيل</th>
+                        <th class="px-4 py-3 text-right text-gray-700">الاسم الكامل</th>
+                        <th class="px-4 py-3 text-right text-gray-700">التخصص</th>
+                        <th class="px-4 py-3 text-right text-gray-700">الشهر</th>
+                        <th class="px-4 py-3 text-right text-gray-700">المبلغ المطلوب</th>
+                        <th class="px-4 py-3 text-right text-gray-700">المبلغ المدفوع</th>
+                        <th class="px-4 py-3 text-right text-gray-700">المتبقي</th>
+                        <th class="px-4 py-3 text-right text-gray-700">الحالة</th>
+                        <th class="px-4 py-3 text-right text-gray-700">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="traineesTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+    `;
+    document.getElementById('dashboard').innerHTML = html;
+    fillSpecialtiesSelect('filterSpecialty');
+    updateTraineesTable();
+    document.getElementById('addTraineeBtn').onclick = showTraineeModal;
+    document.getElementById('searchTrainee').oninput = updateTraineesTable;
+    document.getElementById('filterSpecialty').onchange = updateTraineesTable;
+    document.getElementById('filterMonth').onchange = updateTraineesTable;
+}
+
+// ========== تعبئة خيارات التخصصات ==========
+function fillSpecialtiesSelect(selectId) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    select.innerHTML = '';
+    if (selectId === 'filterSpecialty') {
+        const op = document.createElement('option');
+        op.value = '';
+        op.textContent = 'جميع التخصصات';
+        select.appendChild(op);
     }
-});
+    specialties.forEach(sp => {
+        const op = document.createElement('option');
+        op.value = sp;
+        op.textContent = sp;
+        select.appendChild(op);
+    });
+}
 
-// حذف تخصص
-window.removeSpecialty = function (specialty) {
-    specialties = specialties.filter(s => s !== specialty);
-    localStorage.setItem('specialties', JSON.stringify(specialties));
-    updateSpecialtiesList();
-};
-
-// حفظ إعدادات المدرسة
-document.getElementById('schoolSettingsForm')?.addEventListener('submit', function (e) {
-    e.preventDefault();
-    schoolSettings = {
-        name: document.getElementById('schoolName').value,
-        address: document.getElementById('schoolAddress').value,
-        phone: document.getElementById('schoolPhone').value,
-        email: document.getElementById('schoolEmail').value
-    };
-    localStorage.setItem('schoolSettings', JSON.stringify(schoolSettings));
-    alert('تم حفظ إعدادات المؤسسة!');
-});
-
-// تصدير البيانات
-document.getElementById('exportDataBtn')?.addEventListener('click', function () {
-    const data = {
-        trainees, specialties, schoolSettings
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'school_payments_data.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-});
-
-// استيراد البيانات
-document.getElementById('importDataBtn')?.addEventListener('click', function () {
-    document.getElementById('importDataFile').click();
-});
-document.getElementById('importDataFile')?.addEventListener('change', function (e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (evt) {
-            try {
-                const data = JSON.parse(evt.target.result);
-                if (data.trainees && data.specialties && data.schoolSettings) {
-                    trainees = data.trainees;
-                    specialties = data.specialties;
-                    schoolSettings = data.schoolSettings;
-                    localStorage.setItem('trainees', JSON.stringify(trainees));
-                    localStorage.setItem('specialties', JSON.stringify(specialties));
-                    localStorage.setItem('schoolSettings', JSON.stringify(schoolSettings));
-                    updateSpecialtiesList();
-                    alert('تم استيراد البيانات بنجاح!');
-                    window.location.reload();
-                } else {
-                    alert('ملف البيانات غير صالح');
-                }
-            } catch {
-                alert('حدث خطأ أثناء قراءة الملف!');
-            }
-        };
-        reader.readAsText(file);
+// ========== جدول المتربصين ==========
+function updateTraineesTable() {
+    const tbody = document.getElementById('traineesTableBody');
+    if (!tbody) return;
+    let search = document.getElementById('searchTrainee')?.value.trim().toLowerCase() || '';
+    let specialty = document.getElementById('filterSpecialty')?.value || '';
+    let month = parseInt(document.getElementById('filterMonth')?.value) || 0;
+    let filtered = trainees.filter(t => {
+        let cond = true;
+        if (search) cond = cond && (t.name.toLowerCase().includes(search) || t.regNumber.toLowerCase().includes(search));
+        if (specialty) cond = cond && t.specialty === specialty;
+        if (month) cond = cond && t.month === month;
+        return cond;
+    });
+    tbody.innerHTML = '';
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-3 text-center text-gray-500">لا توجد بيانات متاحة</td></tr>`;
+        return;
     }
-});
+    filtered.sort((a, b) => a.year !== b.year ? a.year - b.year : (a.month !== b.month ? a.month - b.month : a.name.localeCompare(b.name)));
+    filtered.forEach((t, i) => {
+        let tr = document.createElement('tr');
+        tr.className = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+        tr.innerHTML = `
+            <td class="px-4 py-3 text-gray-800">${i + 1}</td>
+            <td class="px-4 py-3 text-gray-800">${t.regNumber}</td>
+            <td class="px-4 py-3 text-gray-800">${t.name}</td>
+            <td class="px-4 py-3 text-gray-800">${t.specialty}</td>
+            <td class="px-4 py-3 text-gray-800">${monthNames[t.month]} ${t.year}</td>
+            <td class="px-4 py-3 text-gray-800">${t.requiredAmount.toLocaleString()} دج</td>
+            <td class="px-4 py-3 text-gray-800">${t.paidAmount.toLocaleString()} دج</td>
+            <td class="px-4 py-3 text-gray-800">${t.remainingAmount.toLocaleString()} دج</td>
+            <td class="px-4 py-3">${t.status || ''}</td>
+            <td class="px-4 py-3"><button class="text-blue-600" onclick="window.editTrainee('${t.id}')"><i class="fas fa-edit"></i></button>
+            <button class="text-red-600" onclick="window.deleteTrainee('${t.id}')"><i class="fas fa-trash-alt"></i></button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
-// حذف جميع البيانات
-document.getElementById('clearDataBtn')?.addEventListener('click', function () {
-    if (confirm('هل تريد حذف جميع البيانات؟')) {
-        localStorage.removeItem('trainees');
-        localStorage.removeItem('specialties');
-        localStorage.removeItem('schoolSettings');
-        window.location.reload();
-    }
-});
-
-// تهيئة عند تحميل الصفحة
-window.addEventListener('DOMContentLoaded', function () {
-    updateSpecialtiesList();
-    // يمكنك هنا استدعاء دوال أخرى لتهيئة الجداول أو الأقسام الأخرى
-});
+// ========== إضافة/تعديل متربص ==========
+function showTraineeModal() {
+    let specialtiesOptions = specialties.map(s => `<option value="${s}">${s}</option>`).join
