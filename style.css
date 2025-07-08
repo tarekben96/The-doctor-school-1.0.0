@@ -22,3 +22,10 @@ input, select, button, textarea {
 }
 ::-webkit-scrollbar {width: 7px;}
 ::-webkit-scrollbar-thumb {background: #e6e6e6; border-radius: 7px;}
+
+.print-only { display: none; }
+@media print {
+    .no-print { display: none !important; }
+    .print-only { display: block; }
+    body { background-color: white; }
+}
