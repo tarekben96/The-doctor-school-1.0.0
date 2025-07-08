@@ -239,16 +239,136 @@ window.deleteTrainee = function (id) {
     updateTraineesTable();
 };
 
+// ================ التقارير ===============
+
 // ================ التقارير ================
 function renderReports() {
+    // حساب الإحصائيات
+    let stats = {};
+    trainees.forEach(t => {
+        let key = `${t.year}-${t.month}`;
+        if (!stats[key]) stats[key] = { count: 0, total: 0, paid: 0, unpaid: 0 };
+        stats[key].count++;
+        stats[key].total += t.requiredAmount;
+        stats[key].paid += t.paidAmount;
+        stats[key].unpaid += (t.requiredAmount - t.paidAmount);
+    });
+
+    // ترتيب التقارير حسب التاريخ
+    let sortedKeys = Object.keys(stats).sort((a, b) => {
+        let [ya, ma] = a.split('-').map(Number);
+        let [yb, mb] = b.split('-').map(Number);
+        return ya !== yb ? ya - yb : ma - mb;
+    });
+
+    // جدول التقارير
+    let rows = sortedKeys.map((key, idx) => {
+        let [year, month] = key.split('-').map(Number);
+        let s = stats[key];
+        let percentPaid = s.total ? Math.round((s.paid / s.total) * 100) : 0;
+        return `
+        <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+            <td class="px-2 py-2">${idx + 1}</td>
+            <td class="px-2 py-2">${monthNames[month]} ${year}</td>
+            <td class="px-2 py-2">${s.count}</td>
+            <td class="px-2 py-2">${s.total.toLocaleString()} دج</td>
+            <td class="px-2 py-2 text-green-700">${s.paid.toLocaleString()} دج</td>
+            <td class="px-2 py-2 text-red-700">${s.unpaid.toLocaleString()} دج</td>
+            <td class="px-2 py-2">${percentPaid}%</td>
+            <td class="px-2 py-2">
+                <button class="text-indigo-700 underline" onclick="window.showMonthDetails('${key}')">تفاصيل</button>
+            </td>
+        </tr>
+        `;
+    }).join('');
+
+    if (!rows) {
+        rows = `<tr><td colspan="8" class="text-center text-gray-500 py-4">لا توجد بيانات تقارير متاحة</td></tr>`;
+    }
+
     document.getElementById('reports').innerHTML = `
     <div class="bg-white rounded-lg shadow-md p-4 mb-6">
         <h2 class="text-xl font-bold text-gray-800 mb-4">التقارير الشهرية</h2>
-        <div class="text-gray-600">سيتم تطوير التقارير لاحقاً. يمكنك التعديل حسب حاجتك.</div>
+        <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-lg overflow-hidden text-sm">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-2 py-2">#</th>
+                    <th class="px-2 py-2">الشهر</th>
+                    <th class="px-2 py-2">عدد المتربصين</th>
+                    <th class="px-2 py-2">إجمالي المطلوب</th>
+                    <th class="px-2 py-2">إجمالي المدفوع</th>
+                    <th class="px-2 py-2">إجمالي المتبقي</th>
+                    <th class="px-2 py-2">نسبة التحصيل</th>
+                    <th class="px-2 py-2">تفاصيل</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+        </div>
     </div>
+    <div id="reportDetailsModal" class="modal-bg hidden"></div>
     `;
 }
 
+// نافذة تفاصيل شهر
+window.showMonthDetails = function(key) {
+    let [year, month] = key.split('-').map(Number);
+    let list = trainees.filter(t => t.year === year && t.month === month);
+
+    let trows = list.map((t, i) => `
+        <tr class="${i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+            <td class="px-2 py-2">${i + 1}</td>
+            <td class="px-2 py-2">${t.regNumber}</td>
+            <td class="px-2 py-2">${t.name}</td>
+            <td class="px-2 py-2">${t.specialty}</td>
+            <td class="px-2 py-2">${t.requiredAmount.toLocaleString()} دج</td>
+            <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
+            <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
+            <td class="px-2 py-2">${t.status}</td>
+        </tr>
+    `).join('');
+    if (!trows) trows = `<tr><td colspan="8" class="text-center text-gray-500 py-4">لا يوجد متربصون في هذا الشهر</td></tr>`;
+
+    let modal = document.getElementById('reportDetailsModal');
+    modal.innerHTML = `
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl mx-2 relative animate-fadeIn">
+        <div class="p-4">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-bold text-gray-800">تفاصيل ${monthNames[month]} ${year}</h3>
+                <button id="closeReportDetailsBtn" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white rounded-lg overflow-hidden text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-2 py-2">#</th>
+                            <th class="px-2 py-2">رقم التسجيل</th>
+                            <th class="px-2 py-2">الاسم الكامل</th>
+                            <th class="px-2 py-2">التخصص</th>
+                            <th class="px-2 py-2">المطلوب</th>
+                            <th class="px-2 py-2">المدفوع</th>
+                            <th class="px-2 py-2">المتبقي</th>
+                            <th class="px-2 py-2">الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>${trows}</tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    `;
+    modal.classList.remove('hidden');
+    modal.onclick = function(e){ if(e.target==modal) closeReportDetails(); }
+    document.getElementById('closeReportDetailsBtn').onclick = closeReportDetails;
+};
+function closeReportDetails() {
+    let modal = document.getElementById('reportDetailsModal');
+    modal.innerHTML = '';
+    modal.classList.add('hidden');
+}
+
+// ... بقية الكود (لوحة التحكم والإعدادات) كما هو
 // ================ الإعدادات ================
 function renderSettings() {
     let specialtiesRows = specialties.map(sp =>
