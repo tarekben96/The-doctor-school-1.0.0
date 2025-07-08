@@ -251,9 +251,9 @@ window.printReceipt = function (id) {
     let dateStr = new Date().toLocaleDateString('ar-DZ');
     let monthStr = monthNames[t.month] + " " + t.year;
     let receiptHtml = `
-    <div class="print-only" style="padding:24px;max-width:800px;margin:auto;">
-        <div style="display:flex;justify-content:space-between;">
-            <div style="width:48%;border:2px dashed #222;padding:12px;margin-bottom:16px;">
+    <div class="print-only" style="padding:24px;max-width:900px;margin:auto;">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;">
+            <div style="width:48%;min-width:300px;border:2px dashed #222;padding:12px;margin-bottom:16px;">
                 <h2 style="text-align:center;font-weight:bold;">وصل دفع - نسخة المتربص</h2>
                 <hr>
                 <p>اسم المؤسسة: <b>${school.name}</b></p>
@@ -273,7 +273,7 @@ window.printReceipt = function (id) {
                 <hr>
                 <div style="text-align:center;font-size:13px;color:#666;">نسخة خاصة بالمتربص</div>
             </div>
-            <div style="width:48%;border:2px dashed #222;padding:12px;margin-bottom:16px;">
+            <div style="width:48%;min-width:300px;border:2px dashed #222;padding:12px;margin-bottom:16px;">
                 <h2 style="text-align:center;font-weight:bold;">وصل دفع - نسخة المؤسسة</h2>
                 <hr>
                 <p>اسم المؤسسة: <b>${school.name}</b></p>
@@ -308,7 +308,6 @@ window.printReceipt = function (id) {
         modal.classList.add('hidden');
     };
 };
-
 // ================ التقارير ================
 function renderReports() {
     // حساب الإحصائيات
