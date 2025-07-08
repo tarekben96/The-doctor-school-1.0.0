@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة دفعات المتربصين - مدرسة الدكاترة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-purple-800 to-indigo-700 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="text-center md:text-right mb-4 md:mb-0 flex items-center">
+                        <div class="mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold">مدرسة الدكاترة - تبسة</h1>
+                            <p class="text-indigo-200">نظام إدارة دفعات المتربصين</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 space-x-reverse">
+                        <button id="showDashboardBtn" class="bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
+                            <i class="fas fa-tachometer-alt ml-1"></i> لوحة التحكم
+                        </button>
+                        <button id="showReportsBtn" class="bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
+                            <i class="fas fa-chart-bar ml-1"></i> التقارير
+                        </button>
+                        <button id="showSettingsBtn" class="bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
+                            <i class="fas fa-cog ml-1"></i> الإعدادات
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Dashboard Section -->
+            <!-- ... كل باقي أقسام الصفحة (لوحة التحكم، التقارير، الإعدادات، النوافذ المنبثقة ...) -->
+            <!-- ضع هنا كل كود HTML الخاص بالنظام من سؤالك السابق دون حذف أي جزء -->
+        </main>
+        <!-- Modals (النوافذ المنبثقة) -->
+        <!-- ... جميع النوافذ المنبثقة (إضافة متربص، إيصال الدفع، التقرير الشهري، سجل المتربص ...) -->
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
