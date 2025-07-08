@@ -41,14 +41,28 @@
                 </div>
             </div>
         </header>
+
         <!-- Main Content -->
         <main class="container mx-auto px-4 py-8">
             <!-- Dashboard Section -->
-            <!-- ... كل باقي أقسام الصفحة (لوحة التحكم، التقارير، الإعدادات، النوافذ المنبثقة ...) -->
-            <!-- ضع هنا كل كود HTML الخاص بالنظام من سؤالك السابق دون حذف أي جزء -->
+            <div id="dashboard" class="mb-8">
+                <!-- سيتم ملؤها ديناميكيا عبر script.js -->
+            </div>
+            <!-- Reports Section -->
+            <div id="reports" class="hidden">
+                <!-- سيتم ملؤها ديناميكيا عبر script.js -->
+            </div>
+            <!-- Settings Section -->
+            <div id="settings" class="hidden">
+                <!-- سيتم ملؤها ديناميكيا عبر script.js -->
+            </div>
         </main>
-        <!-- Modals (النوافذ المنبثقة) -->
-        <!-- ... جميع النوافذ المنبثقة (إضافة متربص، إيصال الدفع، التقرير الشهري، سجل المتربص ...) -->
+
+        <!-- Modals -->
+        <div id="traineeModal" class="hidden"></div>
+        <div id="receiptModal" class="hidden"></div>
+        <div id="monthlyReportModal" class="hidden"></div>
+        <div id="traineeHistoryModal" class="hidden"></div>
     </div>
     <script src="script.js"></script>
 </body>
