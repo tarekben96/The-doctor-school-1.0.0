@@ -106,26 +106,27 @@ function updateTraineesTable() {
     }
     filtered.sort((a, b) => a.year !== b.year ? a.year - b.year : (a.month !== b.month ? a.month - b.month : a.name.localeCompare(b.name)));
     filtered.forEach((t, i) => {
-        let tr = document.createElement('tr');
-        tr.className = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
-        tr.innerHTML = `
-            <td class="px-2 py-2">${i + 1}</td>
-            <td class="px-2 py-2">${t.regNumber}</td>
-            <td class="px-2 py-2">${t.name}</td>
-            <td class="px-2 py-2">${t.specialty}</td>
-            <td class="px-2 py-2">${monthNames[t.month]} ${t.year}</td>
-            <td class="px-2 py-2">${t.requiredAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2 ${t.status === "دفع كلي" ? "text-green-700" : (t.status === "دفع جزئي" ? "text-yellow-700" : "text-red-700")}">${t.status || ''}</td>
-            <td class="px-2 py-2">
-                <button class="text-blue-600" onclick="window.editTrainee('${t.id}')"><i class="fas fa-edit"></i></button>
-                <button class="text-red-600" onclick="window.deleteTrainee('${t.id}')"><i class="fas fa-trash-alt"></i></button>
-                <button class="text-green-600" onclick="window.printReceipt('${t.id}')"><i class="fas fa-print"></i></button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+    let tr = document.createElement('tr');
+    tr.className = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+    tr.innerHTML = `
+        <td class="px-2 py-2">${i + 1}</td>
+        <td class="px-2 py-2">${t.regNumber}</td>
+        <td class="px-2 py-2">${t.name}</td>
+        <td class="px-2 py-2">${t.specialty}</td>
+        <td class="px-2 py-2">${monthNames[t.month]} ${t.year}</td>
+        <td class="px-2 py-2">${t.requiredAmount.toLocaleString()} دج</td>
+        <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
+        <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
+        <td class="px-2 py-2">${t.status || ''}</td>
+        <td class="px-2 py-2">
+            <button class="text-blue-600" onclick="window.editTrainee('${t.id}')"><i class="fas fa-edit"></i></button>
+            <button class="text-red-600" onclick="window.deleteTrainee('${t.id}')"><i class="fas fa-trash-alt"></i></button>
+            <button class="text-green-600" onclick="window.printReceipt('${t.id}')"><i class="fas fa-print"></i></button>
+        </td>
+        </td>
+    `;
+    tbody.appendChild(tr);
+});
 }
 
 // ================ إضافة/تعديل متربص ================
@@ -329,8 +330,91 @@ function renderReports() {
         return ya !== yb ? ya - yb : ma - mb;
     });
 
-    // جدول التقارير
-    let rows = sortedKeys.map((key, idx) => {
-        let [year, month] = key.split('-').map(Number);
-        let s = stats[key];
-        let percentPaid = s.total ? Math.round((s.paid /
+// جدول التقارير
+let rows = sortedKeys.map((key, idx) => {
+    let [year, month] = key.split('-').map(Number);
+    let s = stats[key];
+    let percentPaid = s.total ? Math.round((s.paid / s.total) * 100) : 0;
+    return `
+    <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+        <td class="px-2 py-2">${idx + 1}</td>
+        <td class="px-2 py-2">${monthNames[month]} ${year}</td>
+        <td class="px-2 py-2">${s.count}</td>
+        <td class="px-2 py-2">${s.total.toLocaleString()} دج</td>
+        <td class="px-2 py-2 text-green-700">${s.paid.toLocaleString()} دج</td>
+        <td class="px-2 py-2 text-red-700">${s.unpaid.toLocaleString()} دج</td>
+        <td class="px-2 py-2">${percentPaid}%</td>
+        <td class="px-2 py-2">
+            <button class="text-indigo-700 underline" onclick="window.showMonthDetails('${key}')">تفاصيل</button>
+        </td>
+    </tr>
+    `;
+}).join('');
+    window.printReceipt = function(id) {
+    let t = trainees.find(t => t.id === id);
+    if (!t) return alert("لم يتم العثور على بيانات المتربصة.");
+    let settings = schoolSettings;
+
+    // نفس الوصل مرتين: للمتربصة+للإدارة
+    let receiptHtml = `
+    <div class="receipt-print" style="width:700px; margin:24px auto; font-family:'Tajawal',Arial,sans-serif;">
+      ${[1,2].map(copy => `
+        <div style="border:2px dashed #555; margin-bottom:28px; padding:18px 24px 14px 24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:20px;font-weight:bold;color:#3b82f6;">${settings.name || ''}</div>
+              <div style="font-size:13px;color:#555;">${settings.address || ''}</div>
+              <div style="font-size:13px;color:#555;">هاتف: ${settings.phone || ''}</div>
+            </div>
+            <div style="text-align:left;">
+              <div style="font-size:18px;font-weight:bold;">
+                ${copy===1 ? 'نسخة خاصة بالمتربصة' : 'نسخة خاصة بالإدارة'}
+              </div>
+              <div style="font-size:12px;color:#888;">${(new Date()).toLocaleDateString('ar-DZ')}</div>
+            </div>
+          </div>
+          <hr style="margin:14px 0;">
+          <div style="font-size:16px;margin-bottom:9px;">
+            <span style="font-weight:bold;">وصل دفع رسوم شهر:</span>
+            <span>${monthNames[t.month]} ${t.year}</span>
+          </div>
+          <table style="width:100%;font-size:16px;">
+            <tr><td style="width:160px;">اسم المتربصة:</td><td style="font-weight:bold;">${t.name}</td></tr>
+            <tr><td>رقم التسجيل:</td><td>${t.regNumber}</td></tr>
+            <tr><td>التخصص:</td><td>${t.specialty}</td></tr>
+            <tr><td>المبلغ المطلوب:</td><td>${t.requiredAmount.toLocaleString()} دج</td></tr>
+            <tr><td>المبلغ المدفوع:</td><td style="font-weight:bold;color:green;">${t.paidAmount.toLocaleString()} دج</td></tr>
+            <tr><td>المتبقي:</td><td style="color:red;">${t.remainingAmount.toLocaleString()} دج</td></tr>
+            <tr><td>الحالة:</td><td>${t.status}</td></tr>
+          </table>
+          <div style="margin-top:28px;display:flex;justify-content:space-between;">
+            <div>
+              <span>توقيع الإدارة:</span>
+              <span style="display:inline-block;width:120px;border-bottom:1px solid #bbb;">&nbsp;</span>
+            </div>
+            <div>
+              <span>توقيع المتربصة:</span>
+              <span style="display:inline-block;width:120px;border-bottom:1px solid #bbb;">&nbsp;</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <style>
+      @media print {
+        body > *:not(.receipt-print) { display:none !important; }
+        .receipt-print { display:block !important; }
+      }
+    </style>
+    `;
+
+    // فتح نافذة طباعة
+    let printWindow = window.open('', '', 'width=800,height=900');
+    printWindow.document.write('<html><head><title>وصل دفع</title>');
+    // نسخ الخط من style.css (اختياري)
+    printWindow.document.write(`<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">`);
+    printWindow.document.write('</head><body dir="rtl">' + receiptHtml + '</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => { printWindow.print(); }, 350);
+};
