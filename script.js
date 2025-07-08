@@ -9,6 +9,7 @@ let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || {
     phone: '0123456789',
     email: 'info@doctorsschool.dz'
 };
+let savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]');
 const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
 // ================ تهيئة الصفحة والنقل بين الأقسام ================
@@ -116,10 +117,11 @@ function updateTraineesTable() {
             <td class="px-2 py-2">${t.requiredAmount.toLocaleString()} دج</td>
             <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
             <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.status || ''}</td>
+            <td class="px-2 py-2 ${t.status === "دفع كلي" ? "text-green-700" : (t.status === "دفع جزئي" ? "text-yellow-700" : "text-red-700")}">${t.status || ''}</td>
             <td class="px-2 py-2">
                 <button class="text-blue-600" onclick="window.editTrainee('${t.id}')"><i class="fas fa-edit"></i></button>
                 <button class="text-red-600" onclick="window.deleteTrainee('${t.id}')"><i class="fas fa-trash-alt"></i></button>
+                <button class="text-green-600" onclick="window.printReceipt('${t.id}')"><i class="fas fa-print"></i></button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -211,12 +213,14 @@ function saveTrainee(e) {
         id: traineeId || Date.now().toString(),
         regNumber, name, specialty,
         month, year,
-        requiredAmount, paidAmount, remainingAmount, status
+        requiredAmount, paidAmount, remainingAmount, status,
+        updatedAt: Date.now()
     };
     if (traineeId) {
         let idx = trainees.findIndex(t => t.id === traineeId);
         if (idx !== -1) trainees[idx] = trainee;
     } else {
+        trainee.savedAt = Date.now();
         trainees.push(trainee);
     }
     localStorage.setItem('trainees', JSON.stringify(trainees));
@@ -239,7 +243,71 @@ window.deleteTrainee = function (id) {
     updateTraineesTable();
 };
 
-// ================ التقارير ===============
+// ================ طباعة وصل الدفع ================
+window.printReceipt = function (id) {
+    let t = trainees.find(x => x.id === id);
+    if (!t) return;
+    let school = schoolSettings;
+    let dateStr = new Date().toLocaleDateString('ar-DZ');
+    let monthStr = monthNames[t.month] + " " + t.year;
+    let receiptHtml = `
+    <div class="print-only" style="padding:24px;max-width:800px;margin:auto;">
+        <div style="display:flex;justify-content:space-between;">
+            <div style="width:48%;border:2px dashed #222;padding:12px;margin-bottom:16px;">
+                <h2 style="text-align:center;font-weight:bold;">وصل دفع - نسخة المتربص</h2>
+                <hr>
+                <p>اسم المؤسسة: <b>${school.name}</b></p>
+                <p>العنوان: ${school.address}</p>
+                <p>اسم المتربص: <b>${t.name}</b></p>
+                <p>رقم التسجيل: <b>${t.regNumber}</b></p>
+                <p>التخصص: ${t.specialty}</p>
+                <p>الشهر/السنة: ${monthStr}</p>
+                <p>المبلغ المطلوب: ${t.requiredAmount} دج</p>
+                <p>المبلغ المدفوع: ${t.paidAmount} دج</p>
+                <p>المتبقي: ${t.remainingAmount} دج</p>
+                <p>التاريخ: ${dateStr}</p>
+                <div style="margin-top:22px;display:flex;justify-content:space-between;">
+                    <span>توقيع المؤسسة: ____________</span>
+                    <span>توقيع المتربص: ____________</span>
+                </div>
+                <hr>
+                <div style="text-align:center;font-size:13px;color:#666;">نسخة خاصة بالمتربص</div>
+            </div>
+            <div style="width:48%;border:2px dashed #222;padding:12px;margin-bottom:16px;">
+                <h2 style="text-align:center;font-weight:bold;">وصل دفع - نسخة المؤسسة</h2>
+                <hr>
+                <p>اسم المؤسسة: <b>${school.name}</b></p>
+                <p>العنوان: ${school.address}</p>
+                <p>اسم المتربص: <b>${t.name}</b></p>
+                <p>رقم التسجيل: <b>${t.regNumber}</b></p>
+                <p>التخصص: ${t.specialty}</p>
+                <p>الشهر/السنة: ${monthStr}</p>
+                <p>المبلغ المطلوب: ${t.requiredAmount} دج</p>
+                <p>المبلغ المدفوع: ${t.paidAmount} دج</p>
+                <p>المتبقي: ${t.remainingAmount} دج</p>
+                <p>التاريخ: ${dateStr}</p>
+                <div style="margin-top:22px;display:flex;justify-content:space-between;">
+                    <span>توقيع المؤسسة: ____________</span>
+                    <span>توقيع المتربص: ____________</span>
+                </div>
+                <hr>
+                <div style="text-align:center;font-size:13px;color:#666;">نسخة تحفظ في المؤسسة</div>
+            </div>
+        </div>
+    </div>
+    <div class="no-print" style="text-align:center;margin-top:10px;">
+        <button onclick="window.print();" style="background:#1e40af;color:white;padding:10px 32px;border-radius:8px;">طباعة</button>
+        <button onclick="closeReceiptModal();" style="margin-right:12px;background:#eee;padding:10px 32px;border-radius:8px;">إغلاق</button>
+    </div>
+    `;
+    let modal = document.getElementById('traineeModal');
+    modal.innerHTML = receiptHtml;
+    modal.classList.remove('hidden');
+    window.closeReceiptModal = function(){
+        modal.innerHTML = '';
+        modal.classList.add('hidden');
+    };
+};
 
 // ================ التقارير ================
 function renderReports() {
@@ -265,244 +333,4 @@ function renderReports() {
     let rows = sortedKeys.map((key, idx) => {
         let [year, month] = key.split('-').map(Number);
         let s = stats[key];
-        let percentPaid = s.total ? Math.round((s.paid / s.total) * 100) : 0;
-        return `
-        <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
-            <td class="px-2 py-2">${idx + 1}</td>
-            <td class="px-2 py-2">${monthNames[month]} ${year}</td>
-            <td class="px-2 py-2">${s.count}</td>
-            <td class="px-2 py-2">${s.total.toLocaleString()} دج</td>
-            <td class="px-2 py-2 text-green-700">${s.paid.toLocaleString()} دج</td>
-            <td class="px-2 py-2 text-red-700">${s.unpaid.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${percentPaid}%</td>
-            <td class="px-2 py-2">
-                <button class="text-indigo-700 underline" onclick="window.showMonthDetails('${key}')">تفاصيل</button>
-            </td>
-        </tr>
-        `;
-    }).join('');
-
-    if (!rows) {
-        rows = `<tr><td colspan="8" class="text-center text-gray-500 py-4">لا توجد بيانات تقارير متاحة</td></tr>`;
-    }
-
-    document.getElementById('reports').innerHTML = `
-    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">التقارير الشهرية</h2>
-        <div class="overflow-x-auto">
-        <table class="min-w-full bg-white rounded-lg overflow-hidden text-sm">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-2 py-2">#</th>
-                    <th class="px-2 py-2">الشهر</th>
-                    <th class="px-2 py-2">عدد المتربصين</th>
-                    <th class="px-2 py-2">إجمالي المطلوب</th>
-                    <th class="px-2 py-2">إجمالي المدفوع</th>
-                    <th class="px-2 py-2">إجمالي المتبقي</th>
-                    <th class="px-2 py-2">نسبة التحصيل</th>
-                    <th class="px-2 py-2">تفاصيل</th>
-                </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-        </table>
-        </div>
-    </div>
-    <div id="reportDetailsModal" class="modal-bg hidden"></div>
-    `;
-}
-
-// نافذة تفاصيل شهر
-window.showMonthDetails = function(key) {
-    let [year, month] = key.split('-').map(Number);
-    let list = trainees.filter(t => t.year === year && t.month === month);
-
-    let trows = list.map((t, i) => `
-        <tr class="${i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
-            <td class="px-2 py-2">${i + 1}</td>
-            <td class="px-2 py-2">${t.regNumber}</td>
-            <td class="px-2 py-2">${t.name}</td>
-            <td class="px-2 py-2">${t.specialty}</td>
-            <td class="px-2 py-2">${t.requiredAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.status}</td>
-        </tr>
-    `).join('');
-    if (!trows) trows = `<tr><td colspan="8" class="text-center text-gray-500 py-4">لا يوجد متربصون في هذا الشهر</td></tr>`;
-
-    let modal = document.getElementById('reportDetailsModal');
-    modal.innerHTML = `
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl mx-2 relative animate-fadeIn">
-        <div class="p-4">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="text-lg font-bold text-gray-800">تفاصيل ${monthNames[month]} ${year}</h3>
-                <button id="closeReportDetailsBtn" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white rounded-lg overflow-hidden text-sm">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-2 py-2">#</th>
-                            <th class="px-2 py-2">رقم التسجيل</th>
-                            <th class="px-2 py-2">الاسم الكامل</th>
-                            <th class="px-2 py-2">التخصص</th>
-                            <th class="px-2 py-2">المطلوب</th>
-                            <th class="px-2 py-2">المدفوع</th>
-                            <th class="px-2 py-2">المتبقي</th>
-                            <th class="px-2 py-2">الحالة</th>
-                        </tr>
-                    </thead>
-                    <tbody>${trows}</tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    `;
-    modal.classList.remove('hidden');
-    modal.onclick = function(e){ if(e.target==modal) closeReportDetails(); }
-    document.getElementById('closeReportDetailsBtn').onclick = closeReportDetails;
-};
-function closeReportDetails() {
-    let modal = document.getElementById('reportDetailsModal');
-    modal.innerHTML = '';
-    modal.classList.add('hidden');
-}
-
-// ... بقية الكود (لوحة التحكم والإعدادات) كما هو
-// ================ الإعدادات ================
-function renderSettings() {
-    let specialtiesRows = specialties.map(sp =>
-        `<div class="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
-            <span>${sp}</span>
-            <button class="text-red-600 hover:text-red-800" onclick="window.removeSpecialty('${sp}')">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        </div>`
-    ).join('');
-    document.getElementById('settings').innerHTML = `
-    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">إعدادات النظام</h2>
-        <form id="schoolSettingsForm">
-            <div class="mb-2">
-                <label class="block text-gray-700 mb-1">اسم المؤسسة</label>
-                <input type="text" id="schoolName" class="w-full border border-gray-300 rounded-lg px-3 py-2" value="${schoolSettings.name}">
-            </div>
-            <div class="mb-2">
-                <label class="block text-gray-700 mb-1">عنوان المؤسسة</label>
-                <input type="text" id="schoolAddress" class="w-full border border-gray-300 rounded-lg px-3 py-2" value="${schoolSettings.address}">
-            </div>
-            <div class="mb-2">
-                <label class="block text-gray-700 mb-1">رقم الهاتف</label>
-                <input type="text" id="schoolPhone" class="w-full border border-gray-300 rounded-lg px-3 py-2" value="${schoolSettings.phone}">
-            </div>
-            <div class="mb-2">
-                <label class="block text-gray-700 mb-1">البريد الإلكتروني</label>
-                <input type="email" id="schoolEmail" class="w-full border border-gray-300 rounded-lg px-3 py-2" value="${schoolSettings.email}">
-            </div>
-            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">حفظ الإعدادات</button>
-        </form>
-        <div class="mt-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">إدارة التخصصات</h3>
-            <div class="flex mb-2">
-                <input type="text" id="newSpecialty" class="w-full border border-gray-300 rounded-r-lg px-3 py-2" placeholder="اسم التخصص">
-                <button id="addSpecialtyBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-l-lg hover:bg-indigo-700">إضافة</button>
-            </div>
-            <div id="specialtiesList" class="border border-gray-300 rounded-lg p-2 max-h-44 overflow-y-auto">${specialtiesRows}</div>
-        </div>
-        <div class="mt-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">إدارة البيانات</h3>
-            <div class="flex gap-2">
-                <button id="exportDataBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-                    <i class="fas fa-download ml-1"></i> تصدير البيانات
-                </button>
-                <button id="importDataBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                    <i class="fas fa-upload ml-1"></i> استيراد البيانات
-                </button>
-                <input type="file" id="importDataFile" class="hidden" accept=".json">
-                <button id="clearDataBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
-                    <i class="fas fa-trash-alt ml-1"></i> مسح جميع البيانات
-                </button>
-            </div>
-        </div>
-    </div>
-    `;
-    document.getElementById('schoolSettingsForm').onsubmit = saveSchoolSettings;
-    document.getElementById('addSpecialtyBtn').onclick = addSpecialty;
-    document.getElementById('exportDataBtn').onclick = exportData;
-    document.getElementById('importDataBtn').onclick = () => document.getElementById('importDataFile').click();
-    document.getElementById('importDataFile').onchange = importData;
-    document.getElementById('clearDataBtn').onclick = clearData;
-}
-function addSpecialty() {
-    const input = document.getElementById('newSpecialty');
-    let val = input.value.trim();
-    if (val && !specialties.includes(val)) {
-        specialties.push(val);
-        localStorage.setItem('specialties', JSON.stringify(specialties));
-        renderSettings();
-        renderDashboard();
-    }
-    input.value = '';
-}
-window.removeSpecialty = function (specialty) {
-    specialties = specialties.filter(s => s !== specialty);
-    localStorage.setItem('specialties', JSON.stringify(specialties));
-    renderSettings();
-    renderDashboard();
-};
-function saveSchoolSettings(e) {
-    e.preventDefault();
-    schoolSettings = {
-        name: document.getElementById('schoolName').value,
-        address: document.getElementById('schoolAddress').value,
-        phone: document.getElementById('schoolPhone').value,
-        email: document.getElementById('schoolEmail').value
-    };
-    localStorage.setItem('schoolSettings', JSON.stringify(schoolSettings));
-    alert('تم حفظ إعدادات المؤسسة!');
-    renderSettings();
-}
-function exportData() {
-    const data = { trainees, specialties, schoolSettings };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'school_payments_data.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-function importData(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function (evt) {
-        try {
-            const data = JSON.parse(evt.target.result);
-            if (data.trainees && data.specialties && data.schoolSettings) {
-                trainees = data.trainees;
-                specialties = data.specialties;
-                schoolSettings = data.schoolSettings;
-                localStorage.setItem('trainees', JSON.stringify(trainees));
-                localStorage.setItem('specialties', JSON.stringify(specialties));
-                localStorage.setItem('schoolSettings', JSON.stringify(schoolSettings));
-                alert('تم استيراد البيانات بنجاح!');
-                location.reload();
-            } else {
-                alert('ملف البيانات غير صالح');
-            }
-        } catch {
-            alert('حدث خطأ أثناء قراءة الملف!');
-        }
-    };
-    reader.readAsText(file);
-}
-function clearData() {
-    if (confirm('هل تريد حذف جميع البيانات؟')) {
-        localStorage.removeItem('trainees');
-        localStorage.removeItem('specialties');
-        localStorage.removeItem('schoolSettings');
-        location.reload();
-    }
-}
+        let percentPaid = s.total ? Math.round((s.paid /
