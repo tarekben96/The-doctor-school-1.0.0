@@ -1,46 +1,12 @@
-// ================ بيانات افتراضية ومحلية ================
-let trainees = JSON.parse(localStorage.getItem('trainees')) || [];
-let specialties = JSON.parse(localStorage.getItem('specialties')) || [
-    'تطوير الويب', 'تصميم جرافيك', 'محاسبة', 'إدارة أعمال', 'لغات أجنبية'
-];
-let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || {
-    name: 'مدرسة الدكاترة - تبسة',
-    address: 'تبسة، الجزائر',
-    phone: '0123456789',
-    email: 'info@doctorsschool.dz'
-};
-let savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]');
-const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+// ================ بيانات افتراضية ومحلية ================ let trainees = JSON.parse(localStorage.getItem('trainees')) || []; let specialties = JSON.parse(localStorage.getItem('specialties')) || [ 'تطوير الويب', 'تصميم جرافيك', 'محاسبة', 'إدارة أعمال', 'لغات أجنبية' ]; let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || { name: 'مدرسة الدكاترة - تبسة', address: 'تبسة، الجزائر', phone: '0123456789', email: 'info@doctorsschool.dz' }; let savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]'); const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
-// ================ تهيئة الصفحة والتنقل بين الأقسام ================
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('dashboardBtn').onclick = function() {
-        showSection('dashboardSection');
-    };
-    document.getElementById('reportsBtn').onclick = function() {
-        showSection('reportsSection');
-    };
-    document.getElementById('settingsBtn').onclick = function() {
-        showSection('settingsSection');
-    };
-    // أظهر لوحة التحكم افتراضيًا
-    showSection('dashboardSection');
-});
+// ================ تهيئة الصفحة والتنقل بين الأقسام ================ document.addEventListener('DOMContentLoaded', function () { ['dashboardBtn', 'reportsBtn', 'settingsBtn'].forEach(id => { document.getElementById(id).onclick = () => { showSection(id.replace('Btn', 'Section')); }; }); showSection('dashboardSection'); });
 
-function showSection(sectionId) {
-    // أخفِ كل الأقسام أولاً
-    document.getElementById('dashboardSection').style.display = 'none';
-    document.getElementById('reportsSection').style.display = 'none';
-    document.getElementById('settingsSection').style.display = 'none';
-    document.getElementById('traineesTableSection').style.display = 'none';
+function showSection(sectionId) { ['dashboardSection', 'reportsSection', 'settingsSection', 'traineesTableSection'].forEach(id => { document.getElementById(id).style.display = 'none'; }); document.getElementById(sectionId).style.display = ''; if (sectionId === 'dashboardSection') { document.getElementById('traineesTableSection').style.display = ''; } }
 
-    // أظهر القسم المطلوب فقط
-    document.getElementById(sectionId).style.display = '';
-    // إذا اخترت لوحة التحكم، أظهر الجدول أيضًا
-    if(sectionId === 'dashboardSection') {
-        document.getElementById('traineesTableSection').style.display = '';
-    }
-}
+// ================ بقية الأكواد (لوحة التحكم، حفظ، تعديل، حذف، طباعة، تقارير) ================ // تم تضمينها في ردك السابق وهي تعمل بشكل جيد، ويمكن تحسينها عند الطلب مثل: // - دعم تصدير البيانات // - استخدام قاعدة بيانات خارجية // - إضافة تسجيل دخول // - إلخ
+
+
 // ================ لوحة التحكم ================
 function renderDashboard() {
     let html = `
