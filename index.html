@@ -11,84 +11,42 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" href="favicon.ico">
   <style>
-    body, html { font-family: 'Tajawal', Arial, sans-serif; }
+    body, html {
+      font-family: 'Tajawal', Arial, sans-serif;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1 style="margin-bottom: 4px;">مدرسة الدكاترة - تبسة</h1>
     <div style="color:#7c8bb7;font-size:1.18rem;margin-bottom:20px;font-weight:500;">نظام إدارة دفعات المتربصين</div>
-    
+
     <!-- شريط القوائم الرئيسية -->
     <div id="mainMenu" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;">
-<button id="dashboardBtn" class="main-button"><i class="fas fa-home"></i> لوحة التحكم</button>
-<button id="reportsBtn" class="main-button"><i class="fas fa-chart-line"></i> التقارير</button>
-<button id="settingsBtn" class="main-button"><i class="fas fa-cog"></i> الإعدادات</button>
-      
-    </div>
-    
-    <!-- لوحة التحكم (افتراضي تظهر) -->
-    <div id="dashboardSection">
-      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-        <div class="summary-card">
-          <div style="color:#2563eb;font-size:1.1em;">عدد المتربصين</div>
-          <div id="traineeCount" style="font-size:1.7em;font-weight:bold;">0</div>
-        </div>
-        <div class="summary-card">
-          <div style="color:#16a34a;font-size:1.1em;">إجمالي الدفعات</div>
-          <div id="totalPayments" style="font-size:1.3em;font-weight:bold;">0 دج</div>
-        </div>
-      </div>
-      <div style="margin:22px 0 0 0;text-align:center;font-size:1.09em;color:#555;">
-        مرحباً بك في نظام إدارة دفعات المتربصين.<br>
-        اختر من القوائم أعلاه لإدارة الدفعات أو استعراض الإحصائيات.
-      </div>
+      <button id="dashboardBtn" class="main-btn"><i class="fas fa-home"></i> لوحة التحكم</button>
+      <button id="reportsBtn" class="main-btn"><i class="fas fa-chart-bar"></i> التقارير</button>
+      <button id="settingsBtn" class="main-btn"><i class="fas fa-cog"></i> الإعدادات</button>
     </div>
 
-    <!-- قسم التقارير (يظهر عند الضغط على زر التقارير) -->
+    <!-- الأقسام الرئيسية -->
+    <div id="dashboardSection" style="display:none;">
+      <div id="dashboard"></div>
+    </div>
+
     <div id="reportsSection" style="display:none;">
-      <h2>التقارير</h2>
-      <div style="color:#666;">هنا ستظهر تقارير الدفع وإحصائيات المتربصين.</div>
-    </div>
-    
-    <!-- قسم الإعدادات (يظهر عند الضغط على زر الإعدادات) -->
-    <div id="settingsSection" style="display:none;">
-      <h2>الإعدادات</h2>
-      <div style="color:#666;">يمكنك هنا ضبط بيانات المؤسسة، تعديل الأسعار، ...إلخ.</div>
+      <h2 class="text-xl font-bold mb-2">التقارير</h2>
+      <div id="reportsContent"></div>
     </div>
 
-    <!-- جدول المتربصين (في لوحة التحكم) -->
-    <div id="traineesTableSection" style="margin-top:28px;display:none;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;">
-        <h2 style="margin:0;">قائمة المتربصين</h2>
-        <button id="addTraineeBtn" style="background:#059669;"><i class="fas fa-user-plus"></i> إضافة متربص</button>
-      </div>
-      <table id="traineesTable">
-        <thead>
-          <tr>
-            <th>رقم</th>
-            <th>رقم التسجيل</th>
-            <th>الاسم</th>
-            <th>التخصص</th>
-            <th>الشهر</th>
-            <th>المبلغ المطلوب</th>
-            <th>المدفوع</th>
-            <th>المتبقي</th>
-            <th>الحالة</th>
-            <th>إجراءات</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- تُملأ ديناميكياً بواسطة script.js -->
-        </tbody>
-      </table>
+    <div id="settingsSection" style="display:none;">
+      <h2 class="text-xl font-bold mb-2">الإعدادات</h2>
+      <div id="settingsContent">إعدادات النظام مثل اسم المؤسسة، الأسعار، وغيرها.</div>
     </div>
   </div>
 
-  <!-- نافذة منبثقة عامة (تعديل، إضافة، طباعة...) -->
-  <div id="traineeModal" class="hidden"></div>
+  <!-- نافذة منبثقة (إضافة / تعديل / طباعة) -->
+  <div id="traineeModal" class="fixed inset-0 bg-black bg-opacity-30 hidden z-50 flex items-center justify-center overflow-auto"></div>
 
-  <!-- تحميل السكربت -->
   <script src="script.js"></script>
 </body>
 </html>
