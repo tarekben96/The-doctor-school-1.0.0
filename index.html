@@ -6,12 +6,10 @@
     <title>نظام إدارة دفعات المتربصين - مدرسة الدكاترة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50">
-    <div class="min-h-screen">
+    <div class="min-h-screen flex flex-col">
         <!-- Header -->
         <header class="bg-gradient-to-r from-purple-800 to-indigo-700 text-white shadow-lg">
             <div class="container mx-auto px-4 py-6">
@@ -27,42 +25,28 @@
                             <p class="text-indigo-200">نظام إدارة دفعات المتربصين</p>
                         </div>
                     </div>
-                    <div class="flex space-x-2 space-x-reverse">
-                        <button id="showDashboardBtn" class="bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
+                    <div class="flex flex-row gap-2 mt-2 md:mt-0">
+                        <button id="showDashboardBtn" class="nav-btn bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
                             <i class="fas fa-tachometer-alt ml-1"></i> لوحة التحكم
                         </button>
-                        <button id="showReportsBtn" class="bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
+                        <button id="showReportsBtn" class="nav-btn bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
                             <i class="fas fa-chart-bar ml-1"></i> التقارير
                         </button>
-                        <button id="showSettingsBtn" class="bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
+                        <button id="showSettingsBtn" class="nav-btn bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
                             <i class="fas fa-cog ml-1"></i> الإعدادات
                         </button>
                     </div>
                 </div>
             </div>
         </header>
-
         <!-- Main Content -->
-        <main class="container mx-auto px-4 py-8">
-            <!-- Dashboard Section -->
-            <div id="dashboard" class="mb-8">
-                <!-- سيتم ملؤها ديناميكيا عبر script.js -->
-            </div>
-            <!-- Reports Section -->
-            <div id="reports" class="hidden">
-                <!-- سيتم ملؤها ديناميكيا عبر script.js -->
-            </div>
-            <!-- Settings Section -->
-            <div id="settings" class="hidden">
-                <!-- سيتم ملؤها ديناميكيا عبر script.js -->
-            </div>
+        <main class="container mx-auto px-1 md:px-4 py-4 flex-1 w-full">
+            <div id="dashboard"></div>
+            <div id="reports" class="hidden"></div>
+            <div id="settings" class="hidden"></div>
         </main>
-
         <!-- Modals -->
-        <div id="traineeModal" class="hidden"></div>
-        <div id="receiptModal" class="hidden"></div>
-        <div id="monthlyReportModal" class="hidden"></div>
-        <div id="traineeHistoryModal" class="hidden"></div>
+        <div id="traineeModal" class="modal-bg hidden"></div>
     </div>
     <script src="script.js"></script>
 </body>
