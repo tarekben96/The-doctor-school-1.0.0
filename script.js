@@ -416,3 +416,33 @@ let rows = sortedKeys.map((key, idx) => {
     printWindow.focus();
     setTimeout(() => { printWindow.print(); }, 350);
 };
+// إظهار الأقسام حسب الزر المضغوط
+function showSection(sectionId) {
+    // أخفِ كل الأقسام
+    document.getElementById('dashboardSection').style.display = 'none';
+    document.getElementById('reportsSection').style.display = 'none';
+    document.getElementById('settingsSection').style.display = 'none';
+    document.getElementById('traineesTableSection').style.display = 'none';
+
+    // أظهر القسم المطلوب فقط
+    document.getElementById(sectionId).style.display = '';
+    // إذا كان لوحة التحكم، أظهر جدول المتربصين
+    if (sectionId === 'dashboardSection') {
+        document.getElementById('traineesTableSection').style.display = '';
+    }
+}
+
+// عند تحميل الصفحة، عيّن الأحداث للأزرار
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('dashboardBtn').onclick = function() {
+        showSection('dashboardSection');
+    };
+    document.getElementById('reportsBtn').onclick = function() {
+        showSection('reportsSection');
+    };
+    document.getElementById('settingsBtn').onclick = function() {
+        showSection('settingsSection');
+    };
+    // أظهر لوحة التحكم افتراضيًا
+    showSection('dashboardSection');
+});
