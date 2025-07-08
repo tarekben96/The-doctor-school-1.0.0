@@ -6,28 +6,19 @@ body {
     direction: rtl;
 }
 
-.print-only {
-    display: none;
-}
-
+.print-only { display: none; }
 @media print {
-    .no-print {
-        display: none !important;
-    }
-    .print-only {
-        display: block;
-    }
-    body {
-        background-color: white;
-    }
+    .no-print { display: none !important; }
+    .print-only { display: block; }
+    body { background-color: white; }
 }
-
-/* ألوان إضافية للأزرار - تكميلي */
-.bg-green-600 { background-color: #16a34a !important; }
-.bg-green-700 { background-color: #15803d !important; }
-.bg-blue-600 { background-color: #2563eb !important; }
-.bg-blue-700 { background-color: #1d4ed8 !important; }
-.bg-red-600 { background-color: #dc2626 !important; }
-.bg-red-700 { background-color: #b91c1c !important; }
-.bg-indigo-600 { background-color: #4f46e5 !important; }
-.bg-indigo-700 { background-color: #4338ca !important; }
+.modal-bg {
+    position: fixed; z-index: 50; inset: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+}
+input, select, button, textarea {
+    font-family: inherit;
+}
+::-webkit-scrollbar {width: 7px;}
+::-webkit-scrollbar-thumb {background: #e6e6e6; border-radius: 7px;}
