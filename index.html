@@ -1,52 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>مدرسة الدكاترة - تبسة | نظام إدارة دفعات المتربصين</title>
-  <!-- خط عربي عصري -->
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <!-- أيقونات Font Awesome للأزرار -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" href="favicon.ico">
-  <style>
-    body, html {
-      font-family: 'Tajawal', Arial, sans-serif;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة المهام اليومية</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1 style="margin-bottom: 4px;">مدرسة الدكاترة - تبسة</h1>
-    <div style="color:#7c8bb7;font-size:1.18rem;margin-bottom:20px;font-weight:500;">نظام إدارة دفعات المتربصين</div>
-
-    <!-- شريط القوائم الرئيسية -->
-    <div id="mainMenu" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;">
-      <button id="dashboardBtn" class="main-btn"><i class="fas fa-home"></i> لوحة التحكم</button>
-      <button id="reportsBtn" class="main-btn"><i class="fas fa-chart-bar"></i> التقارير</button>
-      <button id="settingsBtn" class="main-btn"><i class="fas fa-cog"></i> الإعدادات</button>
+    <div class="todo-container">
+        <h1>قائمة المهام 📝</h1>
+        <form id="todoForm">
+            <input type="text" id="todoInput" placeholder="أضف مهمة جديدة..." autocomplete="off" required>
+            <button type="submit">إضافة</button>
+        </form>
+        <ul id="todoList"></ul>
+        <button id="clearAllBtn">حذف جميع المهام</button>
     </div>
-
-    <!-- الأقسام الرئيسية -->
-    <div id="dashboardSection" style="display:none;">
-      <div id="dashboard"></div>
-    </div>
-
-    <div id="reportsSection" style="display:none;">
-      <h2 class="text-xl font-bold mb-2">التقارير</h2>
-      <div id="reportsContent"></div>
-    </div>
-
-    <div id="settingsSection" style="display:none;">
-      <h2 class="text-xl font-bold mb-2">الإعدادات</h2>
-      <div id="settingsContent">إعدادات النظام مثل اسم المؤسسة، الأسعار، وغيرها.</div>
-    </div>
-  </div>
-
-  <!-- نافذة منبثقة (إضافة / تعديل / طباعة) -->
-  <div id="traineeModal" class="fixed inset-0 bg-black bg-opacity-30 hidden z-50 flex items-center justify-center overflow-auto"></div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
