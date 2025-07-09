@@ -441,17 +441,3 @@ function showSection(sectionId) {
     }
 }
 
-// عند تحميل الصفحة، عيّن الأحداث للأزرار
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('dashboardBtn').onclick = function() {
-        showSection('dashboardSection');
-    };
-    document.getElementById('reportsBtn').onclick = function() {
-        showSection('reportsSection');
-    };
-    document.getElementById('settingsBtn').onclick = function() {
-        showSection('settingsSection');
-    };
-    // أظهر لوحة التحكم افتراضيًا
-    showSection('dashboardSection');
-});
