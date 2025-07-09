@@ -1,11 +1,36 @@
-// ================ بيانات افتراضية ومحلية ================ let trainees = JSON.parse(localStorage.getItem('trainees')) || []; let specialties = JSON.parse(localStorage.getItem('specialties')) || [ 'تطوير الويب', 'تصميم جرافيك', 'محاسبة', 'إدارة أعمال', 'لغات أجنبية' ]; let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || { name: 'مدرسة الدكاترة - تبسة', address: 'تبسة، الجزائر', phone: '0123456789', email: 'info@doctorsschool.dz' }; let savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]'); const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+// ================ بيانات افتراضية ومحلية ================
+let trainees = JSON.parse(localStorage.getItem('trainees')) || [];
+let specialties = JSON.parse(localStorage.getItem('specialties')) || [
+    'تطوير الويب', 'تصميم جرافيك', 'محاسبة', 'إدارة أعمال', 'لغات أجنبية'
+];
+let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || {
+    name: 'مدرسة الدكاترة - تبسة',
+    address: 'تبسة، الجزائر',
+    phone: '0123456789',
+    email: 'info@doctorsschool.dz'
+};
+const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
-// ================ تهيئة الصفحة والتنقل بين الأقسام ================ document.addEventListener('DOMContentLoaded', function () { ['dashboardBtn', 'reportsBtn', 'settingsBtn'].forEach(id => { document.getElementById(id).onclick = () => { showSection(id.replace('Btn', 'Section')); }; }); showSection('dashboardSection'); });
+// ================ تهيئة الصفحة والنقل بين الأقسام ================
+window.addEventListener('DOMContentLoaded', function () {
+    renderDashboard();
+    renderReports();
+    renderSettings();
+    document.getElementById('showDashboardBtn').onclick = () => showSection('dashboard');
+    document.getElementById('showReportsBtn').onclick = () => showSection('reports');
+    document.getElementById('showSettingsBtn').onclick = () => showSection('settings');
+    showSection('dashboard');
+});
 
-function showSection(sectionId) { ['dashboardSection', 'reportsSection', 'settingsSection', 'traineesTableSection'].forEach(id => { document.getElementById(id).style.display = 'none'; }); document.getElementById(sectionId).style.display = ''; if (sectionId === 'dashboardSection') { document.getElementById('traineesTableSection').style.display = ''; } }
-
-// ================ بقية الأكواد (لوحة التحكم، حفظ، تعديل، حذف، طباعة، تقارير) ================ // تم تضمينها في ردك السابق وهي تعمل بشكل جيد، ويمكن تحسينها عند الطلب مثل: // - دعم تصدير البيانات // - استخدام قاعدة بيانات خارجية // - إضافة تسجيل دخول // - إلخ
-
+function showSection(id) {
+    ['dashboard','reports','settings'].forEach(sec => {
+        document.getElementById(sec).classList.toggle('hidden', sec!==id);
+    });
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('ring-2'));
+    if(id==='dashboard') document.getElementById('showDashboardBtn').classList.add('ring-2','ring-indigo-300');
+    if(id==='reports') document.getElementById('showReportsBtn').classList.add('ring-2','ring-indigo-300');
+    if(id==='settings') document.getElementById('showSettingsBtn').classList.add('ring-2','ring-indigo-300');
+}
 
 // ================ لوحة التحكم ================
 function renderDashboard() {
@@ -80,27 +105,28 @@ function updateTraineesTable() {
     }
     filtered.sort((a, b) => a.year !== b.year ? a.year - b.year : (a.month !== b.month ? a.month - b.month : a.name.localeCompare(b.name)));
     filtered.forEach((t, i) => {
-    let tr = document.createElement('tr');
-    tr.className = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
-    tr.innerHTML = `
-        <td class="px-2 py-2">${i + 1}</td>
-        <td class="px-2 py-2">${t.regNumber}</td>
-        <td class="px-2 py-2">${t.name}</td>
-        <td class="px-2 py-2">${t.specialty}</td>
-        <td class="px-2 py-2">${monthNames[t.month]} ${t.year}</td>
-        <td class="px-2 py-2">${t.requiredAmount.toLocaleString()} دج</td>
-        <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
-        <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
-        <td class="px-2 py-2">${t.status || ''}</td>
-        <td class="px-2 py-2">
-            <button class="text-blue-600" onclick="window.editTrainee('${t.id}')"><i class="fas fa-edit"></i></button>
-            <button class="text-red-600" onclick="window.deleteTrainee('${t.id}')"><i class="fas fa-trash-alt"></i></button>
-            <button class="text-green-600" onclick="window.printReceipt('${t.id}')"><i class="fas fa-print"></i></button>
-        </td>
-    `;
-    tbody.appendChild(tr);
-});
+        let tr = document.createElement('tr');
+        tr.className = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+        tr.innerHTML = `
+            <td class="px-2 py-2">${i + 1}</td>
+            <td class="px-2 py-2">${t.regNumber}</td>
+            <td class="px-2 py-2">${t.name}</td>
+            <td class="px-2 py-2">${t.specialty}</td>
+            <td class="px-2 py-2">${monthNames[t.month]} ${t.year}</td>
+            <td class="px-2 py-2">${t.requiredAmount.toLocaleString()} دج</td>
+            <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
+            <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
+            <td class="px-2 py-2">${t.status || ''}</td>
+            <td class="px-2 py-2">
+                <button class="text-blue-600" onclick="window.editTrainee('${t.id}')"><i class="fas fa-edit"></i></button>
+                <button class="text-red-600" onclick="window.deleteTrainee('${t.id}')"><i class="fas fa-trash-alt"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
+
+// ================ بقية الأكواد (لوحة التحكم، حفظ، تعديل، حذف، طباعة، تقارير) ================ // تم تضمينها في ردك السابق
 
 // ================ إضافة/تعديل متربص ================
 function showTraineeModal(editObj=null) {
