@@ -34,7 +34,7 @@ function showSection(sectionId) {
     document.getElementById('traineesTableSection').style.display = 'none';
 
     // أظهر القسم المطلوب فقط
-    document.getElementById(sectionId).style.display = '';
+    
     // إذا اخترت لوحة التحكم، أظهر الجدول أيضًا
     if(sectionId === 'dashboardSection') {
         document.getElementById('traineesTableSection').style.display = '';
