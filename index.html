@@ -56,17 +56,13 @@
 
   <!-- ربط ملف الجافاسكريبت -->
   <script src="script.js"></script>
-
-  <!-- دوال تحكم الأقسام -->
   <script>
-    // جعل دالة showSection متاحة
     function showSection(sectionId) {
-      document.getElementById('dashboardSection').style.display = 'none';
-      document.getElementById('reportsSection').style.display = 'none';
-      document.getElementById('settingsSection').style.display = 'none';
-      document.getElementById('traineesTableSection').style.display = 'none';
-
-      document.getElementById(sectionId).style.display = '';
+      const sections = ['dashboardSection', 'reportsSection', 'settingsSection'];
+      sections.forEach(id => {
+        document.getElementById(id).style.display = (id === sectionId) ? '' : 'none';
+      });
+      // إظهار جدول المتربصين عند العودة إلى لوحة التحكم
       if (sectionId === 'dashboardSection') {
         document.getElementById('traineesTableSection').style.display = '';
       }
@@ -77,13 +73,13 @@
       renderDashboard();
       showSection('dashboardSection');
 
-      // تحميل إعدادات المؤسسة في نموذج الإعدادات
+      // تحميل إعدادات المؤسسة
       document.getElementById('schoolName').value = schoolSettings.name;
       document.getElementById('schoolAddress').value = schoolSettings.address;
       document.getElementById('schoolPhone').value = schoolSettings.phone;
       document.getElementById('schoolEmail').value = schoolSettings.email;
 
-      // حفظ الإعدادات عند الضغط على زر "حفظ"
+      // حفظ الإعدادات
       document.getElementById('schoolSettingsForm').onsubmit = function(e) {
         e.preventDefault();
         schoolSettings.name = document.getElementById('schoolName').value.trim();
@@ -92,8 +88,8 @@
         schoolSettings.email = document.getElementById('schoolEmail').value.trim();
         localStorage.setItem('schoolSettings', JSON.stringify(schoolSettings));
         alert('تم حفظ إعدادات المؤسسة بنجاح');
-      }
-    }
+      };
+    };
   </script>
 </body>
 </html>
