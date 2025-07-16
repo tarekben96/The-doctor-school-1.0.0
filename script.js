@@ -239,6 +239,72 @@ window.deleteTrainee = function (id) {
     updateTraineesTable();
 };
 
+// ================ طباعة وصل الدفع ================
+window.printReceipt = function (id) {
+    let t = trainees.find(x => x.id === id);
+    if (!t) return;
+    let school = schoolSettings;
+    let dateStr = new Date().toLocaleDateString('ar-DZ');
+    let monthStr = monthNames[t.month] + " " + t.year;
+    let receiptHtml = `
+    <div class="print-only" style="padding:24px;max-width:900px;margin:auto;">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;">
+            <div style="width:48%;min-width:300px;border:2px dashed #222;padding:12px;margin-bottom:16px;">
+                <h2 style="text-align:center;font-weight:bold;">وصل دفع - نسخة المتربص</h2>
+                <hr>
+                <p>اسم المؤسسة: <b>${school.name}</b></p>
+                <p>العنوان: ${school.address}</p>
+                <p>اسم المتربص: <b>${t.name}</b></p>
+                <p>رقم التسجيل: <b>${t.regNumber}</b></p>
+                <p>التخصص: ${t.specialty}</p>
+                <p>الشهر/السنة: ${monthStr}</p>
+                <p>المبلغ المطلوب: ${t.requiredAmount} دج</p>
+                <p>المبلغ المدفوع: ${t.paidAmount} دج</p>
+                <p>المتبقي: ${t.remainingAmount} دج</p>
+                <p>التاريخ: ${dateStr}</p>
+                <div style="margin-top:22px;display:flex;justify-content:space-between;">
+                    <span>توقيع المؤسسة: ____________</span>
+                    <span>توقيع المتربص: ____________</span>
+                </div>
+                <hr>
+                <div style="text-align:center;font-size:13px;color:#666;">نسخة خاصة بالمتربص</div>
+            </div>
+            <div style="width:48%;min-width:300px;border:2px dashed #222;padding:12px;margin-bottom:16px;">
+                <h2 style="text-align:center;font-weight:bold;">وصل دفع - نسخة المؤسسة</h2>
+                <hr>
+                <p>اسم المؤسسة: <b>${school.name}</b></p>
+                <p>العنوان: ${school.address}</p>
+                <p>اسم المتربص: <b>${t.name}</b></p>
+                <p>رقم التسجيل: <b>${t.regNumber}</b></p>
+                <p>التخصص: ${t.specialty}</p>
+                <p>الشهر/السنة: ${monthStr}</p>
+                <p>المبلغ المطلوب: ${t.requiredAmount} دج</p>
+                <p>المبلغ المدفوع: ${t.paidAmount} دج</p>
+                <p>المتبقي: ${t.remainingAmount} دج</p>
+                <p>التاريخ: ${dateStr}</p>
+                <div style="margin-top:22px;display:flex;justify-content:space-between;">
+                    <span>توقيع المؤسسة: ____________</span>
+                    <span>توقيع المتربص: ____________</span>
+                </div>
+                <hr>
+                <div style="text-align:center;font-size:13px;color:#666;">نسخة تحفظ في المؤسسة</div>
+            </div>
+        </div>
+    </div>
+    <div class="no-print" style="text-align:center;margin-top:10px;">
+        <button onclick="window.print();" style="background:#1e40af;color:white;padding:10px 32px;border-radius:8px;">طباعة</button>
+        <button onclick="closeReceiptModal();" style="margin-right:12px;background:#eee;padding:10px 32px;border-radius:8px;">إغلاق</button>
+    </div>
+    `;
+    let modal = document.getElementById('traineeModal');
+    modal.innerHTML = receiptHtml;
+    modal.classList.remove('hidden');
+    window.closeReceiptModal = function(){
+        modal.innerHTML = '';
+        modal.classList.add('hidden');
+    };
+};
+// 
 // ================ التقارير ===============
 
 // ================ التقارير ================
