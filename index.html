@@ -24,7 +24,7 @@
   </header>
   <nav class="bg-white shadow mb-4">
     <div class="container mx-auto px-4 py-2 flex gap-3">
-      <button onclick="showSection('dashboardSection')" class="text-indigo-700 hover:underline">لوحة التحكم</button>
+      <button onclick="showSection('dashboardSection')">لوحة التحكم</button>
       <button onclick="showSection('reportsSection')" class="text-indigo-700 hover:underline">التقارير</button>
       <button onclick="showSection('settingsSection')" class="text-indigo-700 hover:underline">الإعدادات</button>
       <button onclick="handleLogout()" class="text-red-600 ml-auto hover:underline">تسجيل الخروج</button>
@@ -40,9 +40,8 @@
         <p id="loginError" class="text-red-600 mt-2 hidden">❌ بيانات الدخول غير صحيحة</p>
       </div>
     </section>
-    <section id="dashboardSection">
-      <div id="dashboard"></div>
-      <div id="traineesTableSection" class="mt-4"></div>
+    <section id="dashboardSection" class="hidden">
+    <div id="dashboard"></div>
     </section>
     <section id="reportsSection" style="display: none;">
       <div class="bg-white p-4 rounded-lg shadow">
