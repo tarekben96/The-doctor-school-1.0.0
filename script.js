@@ -12,8 +12,17 @@ let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || {
 const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
 // ================ تهيئة الصفحة والتنقل بين الأقسام ================
-
-// ================ لوحة التحكم ================
+function showSection(sectionId) {
+    document.getElementById('dashboardSection').style.display = 'none';
+    document.getElementById('reportsSection').style.display = 'none';
+    document.getElementById('settingsSection').style.display = 'none';
+    document.getElementById('traineesTableSection').style.display = 'none';
+    document.getElementById(sectionId).style.display = '';
+    if (sectionId === 'dashboardSection') {
+        document.getElementById('traineesTableSection').style.display = '';
+    }
+}
+// ================ إعداد لوحة التحكم ================
 function renderDashboard() {
     let html = `
     <div class="bg-white rounded-lg shadow-md p-3 mb-4">
@@ -60,12 +69,15 @@ function renderDashboard() {
     document.getElementById('filterSpecialty').onchange = updateTraineesTable;
     document.getElementById('filterMonth').onchange = updateTraineesTable;
 }
+// ================ ملء التخصصات ==================
 function fillSpecialtiesSelect(selectId) {
     const select = document.getElementById(selectId);
     if (!select) return;
     select.innerHTML = '<option value="">جميع التخصصات</option>' +
         specialties.map(s=>`<option value="${s}">${s}</option>`).join('');
 }
+
+// ================ عرض جدول المتربصين ================
 function updateTraineesTable() {
     const tbody = document.getElementById('traineesTableBody');
     if (!tbody) return;
@@ -106,8 +118,6 @@ function updateTraineesTable() {
         tbody.appendChild(tr);
     });
 }
-
-// ================ بقية الأكواد (لوحة التحكم، حفظ، تعديل، حذف، طباعة، تقارير) ================ // تم تضمينها في ردك السابق
 
 // ================ إضافة/تعديل متربص ================
 function showTraineeModal(editObj=null) {
