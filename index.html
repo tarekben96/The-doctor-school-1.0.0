@@ -56,7 +56,22 @@
 
   <!-- ربط ملف الجافاسكريبت -->
   <script src="script.js"></script>
+
+  <!-- دوال تحكم الأقسام -->
   <script>
+    // جعل دالة showSection متاحة
+    function showSection(sectionId) {
+      document.getElementById('dashboardSection').style.display = 'none';
+      document.getElementById('reportsSection').style.display = 'none';
+      document.getElementById('settingsSection').style.display = 'none';
+      document.getElementById('traineesTableSection').style.display = 'none';
+
+      document.getElementById(sectionId).style.display = '';
+      if (sectionId === 'dashboardSection') {
+        document.getElementById('traineesTableSection').style.display = '';
+      }
+    }
+
     // تحميل البيانات عند فتح الصفحة
     window.onload = function() {
       renderDashboard();
