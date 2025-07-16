@@ -29,6 +29,8 @@ function handleLogout() {
 function showApp() {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('dashboardSection').style.display = '';
+    document.getElementById('traineesTableSection').style.display = '';
+    renderDashboard(); 
 }
 
 window.onload = function () {
