@@ -22,6 +22,8 @@ function showSection(sectionId) {
         document.getElementById('traineesTableSection').style.display = '';
     }
 }
+window.showSection = showSection;
+
 // ================ إعداد لوحة التحكم ================
 function renderDashboard() {
     let html = `
