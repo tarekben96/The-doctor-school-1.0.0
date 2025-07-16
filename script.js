@@ -20,7 +20,7 @@ function showSection(sectionId) {
 
     if (sectionId === 'dashboardSection') {
         document.getElementById('traineesTableSection').style.display = '';
-        renderDashboard(); // ✅ ضروري لإظهار البيانات
+        renderDashboard();
     } else {
         document.getElementById('traineesTableSection').style.display = 'none';
     }
@@ -28,108 +28,28 @@ function showSection(sectionId) {
     if (sectionId === 'reportsSection') {
         renderReports();
     }
-}
-// ================ عرض لوحة التحكم ===================
-function renderDashboard() {
-    const dashboard = document.getElementById('dashboard');
-    dashboard.innerHTML = `
-    <div class="bg-white rounded-lg shadow-md p-3 mb-4">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-3">
-            <h2 class="text-xl font-bold text-gray-800 mb-3 md:mb-0">إدارة المتربصين</h2>
-            <button id="addTraineeBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                <i class="fas fa-plus ml-1"></i> إضافة متربص جديد
-            </button>
-        </div>
-        <div class="flex flex-col md:flex-row gap-2 mb-2">
-            <input type="text" id="searchTrainee" class="w-full border rounded-lg px-3 py-2" placeholder="بحث عن متربص...">
-            <select id="filterSpecialty" class="w-full border rounded-lg px-3 py-2"></select>
-            <select id="filterMonth" class="w-full border rounded-lg px-3 py-2">
-                <option value="0">جميع الأشهر</option>
-                ${monthNames.map((m,i)=>i?`<option value="${i}">${m}</option>`:'').join('')}
-            </select>
-        </div>
-        <div class="overflow-x-auto mt-2">
-            <table class="min-w-full text-sm bg-white rounded-lg overflow-hidden">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-2 py-2">#</th>
-                        <th class="px-2 py-2">رقم التسجيل</th>
-                        <th class="px-2 py-2">الاسم الكامل</th>
-                        <th class="px-2 py-2">التخصص</th>
-                        <th class="px-2 py-2">الشهر</th>
-                        <th class="px-2 py-2">المطلوب</th>
-                        <th class="px-2 py-2">المدفوع</th>
-                        <th class="px-2 py-2">المتبقي</th>
-                        <th class="px-2 py-2">الحالة</th>
-                        <th class="px-2 py-2">إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="traineesTableBody"></tbody>
-            </table>
-        </div>
-    </div>
-    `;
-    fillSpecialtiesSelect('filterSpecialty');
-    updateTraineesTable();
-
-    document.getElementById('addTraineeBtn').onclick = () => showTraineeModal();
-    document.getElementById('searchTrainee').oninput = updateTraineesTable;
-    document.getElementById('filterSpecialty').onchange = updateTraineesTable;
-    document.getElementById('filterMonth').onchange = updateTraineesTable;
+    if (sectionId === 'settingsSection') {
+        renderSettings();
+    }
 }
 
-// ================ التخصصات ===================
-function fillSpecialtiesSelect(selectId) {
-    const select = document.getElementById(selectId);
-    if (!select) return;
-    select.innerHTML = '<option value="">جميع التخصصات</option>' +
-        specialties.map(s=>`<option value="${s}">${s}</option>`).join('');
-}
+// ================ الإعدادات ===================
+function renderSettings() {
+    const settingsForm = document.getElementById('settingsForm');
+    document.getElementById('schoolName').value = schoolSettings.name;
+    document.getElementById('schoolAddress').value = schoolSettings.address;
+    document.getElementById('schoolPhone').value = schoolSettings.phone;
+    document.getElementById('schoolEmail').value = schoolSettings.email;
 
-// ================ عرض المتربصين ===================
-function updateTraineesTable() {
-    const tbody = document.getElementById('traineesTableBody');
-    const search = document.getElementById('searchTrainee').value.trim().toLowerCase();
-    const specialty = document.getElementById('filterSpecialty').value;
-    const month = parseInt(document.getElementById('filterMonth').value);
-
-    let filtered = trainees.filter(t => {
-        return (!search || t.name.toLowerCase().includes(search) || t.regNumber.toLowerCase().includes(search)) &&
-               (!specialty || t.specialty === specialty) &&
-               (!month || t.month === month);
-    });
-
-    tbody.innerHTML = filtered.length ? '' : `<tr><td colspan="10" class="text-center text-gray-500 py-3">لا توجد بيانات</td></tr>`;
-
-    filtered.sort((a, b) => a.year - b.year || a.month - b.month || a.name.localeCompare(b.name));
-    filtered.forEach((t, i) => {
-        const tr = document.createElement('tr');
-        tr.className = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
-        tr.innerHTML = `
-            <td class="px-2 py-2">${i + 1}</td>
-            <td class="px-2 py-2">${t.regNumber}</td>
-            <td class="px-2 py-2">${t.name}</td>
-            <td class="px-2 py-2">${t.specialty}</td>
-            <td class="px-2 py-2">${monthNames[t.month]} ${t.year}</td>
-            <td class="px-2 py-2">${t.requiredAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
-            <td class="px-2 py-2">${t.status}</td>
-            <td class="px-2 py-2 flex gap-2">
-                <button class="text-blue-600 hover:text-blue-800" onclick="editTrainee('${t.id}')" title="تعديل">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="text-red-600 hover:text-red-800" onclick="deleteTrainee('${t.id}')" title="حذف">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-                <button class="text-green-600 hover:text-green-800" onclick="printReceipt('${t.id}')" title="طباعة وصل">
-                    <i class="fas fa-print"></i>
-                </button>
-            </td>
-`;
-
-        tbody.appendChild(tr);
-    });
+    settingsForm.onsubmit = function (e) {
+        e.preventDefault();
+        schoolSettings.name = document.getElementById('schoolName').value.trim();
+        schoolSettings.address = document.getElementById('schoolAddress').value.trim();
+        schoolSettings.phone = document.getElementById('schoolPhone').value.trim();
+        schoolSettings.email = document.getElementById('schoolEmail').value.trim();
+        localStorage.setItem('schoolSettings', JSON.stringify(schoolSettings));
+        alert('تم حفظ إعدادات المؤسسة بنجاح.');
+    };
 }
 
 // ================ نافذة المتربص ===================
@@ -184,13 +104,12 @@ function showTraineeModal(t = {}) {
                 </div>
             </form>
         </div>
-    </div>
-    `;
+    </div>`;
 
     modal.classList.remove('hidden');
     document.getElementById('traineeSpecialty').value = t.specialty || specialties[0];
     document.getElementById('traineeMonth').value = t.month || 1;
-    document.getElementById('traineeYear').value = t.year || 2024;
+    document.getElementById('traineeYear').value = t.year || new Date().getFullYear();
     document.getElementById('traineeForm').onsubmit = saveTrainee;
 }
 
@@ -210,14 +129,14 @@ function saveTrainee(e) {
         month: parseInt(document.getElementById('traineeMonth').value),
         year: parseInt(document.getElementById('traineeYear').value),
         requiredAmount: parseFloat(document.getElementById('traineeRequiredAmount').value),
-        paidAmount: parseFloat(document.getElementById('traineePaidAmount').value),
+        paidAmount: parseFloat(document.getElementById('traineePaidAmount').value)
     };
     trainee.remainingAmount = trainee.requiredAmount - trainee.paidAmount;
     trainee.status = trainee.paidAmount === 0 ? 'لم يدفع' :
-                    (trainee.paidAmount >= trainee.requiredAmount ? 'دفع كلي' : 'دفع جزئي');
+                     (trainee.paidAmount >= trainee.requiredAmount ? 'دفع كلي' : 'دفع جزئي');
 
-    const idx = trainees.findIndex(t => t.id === trainee.id);
-    if (idx !== -1) trainees[idx] = trainee;
+    const index = trainees.findIndex(t => t.id === trainee.id);
+    if (index !== -1) trainees[index] = trainee;
     else trainees.push(trainee);
 
     localStorage.setItem('trainees', JSON.stringify(trainees));
@@ -225,20 +144,19 @@ function saveTrainee(e) {
     updateTraineesTable();
 }
 
-window.editTrainee = function(id) {
+function editTrainee(id) {
     const t = trainees.find(t => t.id === id);
     if (t) showTraineeModal(t);
-};
+}
 
-window.deleteTrainee = function(id) {
+function deleteTrainee(id) {
     if (!confirm('هل أنت متأكد من حذف هذا المتربص؟')) return;
     trainees = trainees.filter(t => t.id !== id);
     localStorage.setItem('trainees', JSON.stringify(trainees));
     updateTraineesTable();
-};
+}
 
-// ================ الطباعة ===================
-window.printReceipt = function(id) {
+function printReceipt(id) {
     const t = trainees.find(x => x.id === id);
     if (!t) return alert("المتربص غير موجود");
 
@@ -264,17 +182,15 @@ window.printReceipt = function(id) {
                 <p><strong>التاريخ:</strong> ${dateStr}</p>
             </div>
         `).join('')}
-    </div>
-    `;
+    </div>`;
 
     let win = window.open('', '', 'width=800,height=900');
     win.document.write(`<html><head><title>وصل دفع</title><link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet"></head><body dir="rtl">${receiptHTML}</body></html>`);
     win.document.close();
     win.focus();
     setTimeout(() => win.print(), 500);
-};
+}
 
-// ================ التقارير ===================
 function renderReports() {
     let stats = {};
     trainees.forEach(t => {
