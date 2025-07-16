@@ -10,19 +10,25 @@ let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || {
     email: 'info@doctorsschool.dz'
 };
 const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+// ================ إعداد لوحة التحكم ================
 
-// ================ تهيئة الصفحة والتنقل بين الأقسام ================
 function showSection(sectionId) {
-    document.getElementById('dashboardSection').style.display = 'none';
-    document.getElementById('reportsSection').style.display = 'none';
-    document.getElementById('settingsSection').style.display = 'none';
-    document.getElementById('traineesTableSection').style.display = 'none';
-    document.getElementById(sectionId).style.display = '';
-    if (sectionId === 'dashboardSection') {
-        document.getElementById('traineesTableSection').style.display = '';
-    }
+  document.getElementById('dashboardSection').style.display = 'none';
+  document.getElementById('reportsSection').style.display = 'none';
+  document.getElementById('settingsSection').style.display = 'none';
+  document.getElementById('traineesTableSection').style.display = 'none';
+
+  document.getElementById(sectionId).style.display = '';
+  
+  if (sectionId === 'dashboardSection') {
+    document.getElementById('traineesTableSection').style.display = '';
+  }
+
+  if (sectionId === 'reportsSection') {
+    renderReports();  // <<< هذا السطر ضروري لتحديث التقارير عند الدخول
+  }
 }
-window.showSection = showSection;
+
 
 // ================ إعداد لوحة التحكم ================
 function renderDashboard() {
