@@ -306,8 +306,6 @@ window.printReceipt = function (id) {
 };
 // 
 // ================ التقارير ===============
-
-// ================ التقارير ================
 function renderReports() {
     // حساب الإحصائيات
     let stats = {};
@@ -347,10 +345,88 @@ function renderReports() {
         </tr>
         `;
     }).join('');
+window.printReceipt = function(id) {
+    let t = trainees.find(t => t.id === id);
+    if (!t) return alert("لم يتم العثور على بيانات المتربصة.");
+    let settings = schoolSettings;
+// نفس الوصل مرتين: للمتربصة+للإدارة
+    let receiptHtml = `
+    <div class="receipt-print" style="width:700px; margin:24px auto; font-family:'Tajawal',Arial,sans-serif;">
+      ${[1,2].map(copy => `
+        <div style="border:2px dashed #555; margin-bottom:28px; padding:18px 24px 14px 24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:20px;font-weight:bold;color:#3b82f6;">${settings.name || ''}</div>
+              <div style="font-size:13px;color:#555;">${settings.address || ''}</div>
+              <div style="font-size:13px;color:#555;">هاتف: ${settings.phone || ''}</div>
+            </div>
+            <div style="text-align:left;">
+              <div style="font-size:18px;font-weight:bold;">
+                ${copy===1 ? 'نسخة خاصة بالمتربصة' : 'نسخة خاصة بالإدارة'}
+              </div>
+              <div style="font-size:12px;color:#888;">${(new Date()).toLocaleDateString('ar-DZ')}</div>
+            </div>
+          </div>
+          <hr style="margin:14px 0;">
+          <div style="font-size:16px;margin-bottom:9px;">
+            <span style="font-weight:bold;">وصل دفع رسوم شهر:</span>
+            <span>${monthNames[t.month]} ${t.year}</span>
+              </div>
+          <table style="width:100%;font-size:16px;">
+            <tr><td style="width:160px;">اسم المتربصة:</td><td style="font-weight:bold;">${t.name}</td></tr>
+            <tr><td>رقم التسجيل:</td><td>${t.regNumber}</td></tr>
+            <tr><td>التخصص:</td><td>${t.specialty}</td></tr>
+            <tr><td>المبلغ المطلوب:</td><td>${t.requiredAmount.toLocaleString()} دج</td></tr>
+            <tr><td>المبلغ المدفوع:</td><td style="font-weight:bold;color:green;">${t.paidAmount.toLocaleString()} دج</td></tr>
+            <tr><td>المتبقي:</td><td style="color:red;">${t.remainingAmount.toLocaleString()} دج</td></tr>
+            <tr><td>الحالة:</td><td>${t.status}</td></tr>
+          </table>
+          <div style="margin-top:28px;display:flex;justify-content:space-between;">
+            <div>
+              <span>توقيع الإدارة:</span>
+              <span style="display:inline-block;width:120px;border-bottom:1px solid #bbb;">&nbsp;</span>
+            </div>
+            <div>
+              <span>توقيع المتربصة:</span>
+              <span style="display:inline-block;width:120px;border-bottom:1px solid #bbb;">&nbsp;</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <style>
+      @media print {
+        body > *:not(.receipt-print) { display:none !important; }
+        .receipt-print { display:block !important; }
+      }
+    </style>
+    `;
 
-    if (!rows) {
-        rows = `<tr><td colspan="8" class="text-center text-gray-500 py-4">لا توجد بيانات تقارير متاحة</td></tr>`;
+ // فتح نافذة طباعة
+    let printWindow = window.open('', '', 'width=800,height=900');
+    printWindow.document.write('<html><head><title>وصل دفع</title>');
+    // نسخ الخط من style.css (اختياري)
+    printWindow.document.write(`<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">`);
+    printWindow.document.write('</head><body dir="rtl">' + receiptHtml + '</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => { printWindow.print(); }, 350);
+};
+// إظهار الأقسام حسب الزر المضغوط
+function showSection(sectionId) {
+    // أخفِ كل الأقسام
+    document.getElementById('dashboardSection').style.display = 'none';
+    document.getElementById('reportsSection').style.display = 'none';
+    document.getElementById('settingsSection').style.display = 'none';
+    document.getElementById('traineesTableSection').style.display = 'none';
+
+    // أظهر القسم المطلوب فقط
+    document.getElementById(sectionId).style.display = '';
+    // إذا كان لوحة التحكم، أظهر جدول المتربصين
+    if (sectionId === 'dashboardSection') {
+        document.getElementById('traineesTableSection').style.display = '';
     }
+}
 
     document.getElementById('reports').innerHTML = `
     <div class="bg-white rounded-lg shadow-md p-4 mb-6">
