@@ -4,16 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>نظام إدارة المتربصين - مدرسة الدكاترة</title>
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
-  <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      font-family: 'Tajawal', sans-serif;
-    }
+    body { font-family: 'Tajawal', sans-serif; }
     .print-only { display: none; }
     @media print {
       .no-print { display: none !important; }
@@ -22,33 +17,33 @@
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-
-  <!-- رأس الصفحة -->
   <header class="bg-indigo-700 text-white py-4 shadow">
     <div class="container mx-auto px-4">
       <h1 class="text-2xl font-bold">📚 مدرسة الدكاترة - نظام إدارة المتربصين</h1>
     </div>
   </header>
-
-  <!-- قائمة التنقل -->
   <nav class="bg-white shadow mb-4">
     <div class="container mx-auto px-4 py-2 flex gap-3">
       <button onclick="showSection('dashboardSection')" class="text-indigo-700 hover:underline">لوحة التحكم</button>
       <button onclick="showSection('reportsSection')" class="text-indigo-700 hover:underline">التقارير</button>
       <button onclick="showSection('settingsSection')" class="text-indigo-700 hover:underline">الإعدادات</button>
+      <button onclick="handleLogout()" class="text-red-600 ml-auto hover:underline">تسجيل الخروج</button>
     </div>
   </nav>
-
-  <!-- الأقسام -->
   <main class="container mx-auto px-4">
-
-    <!-- لوحة التحكم -->
+    <section id="loginSection" style="display: none;">
+      <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-4">تسجيل الدخول</h2>
+        <input type="text" id="loginUsername" placeholder="اسم المستخدم" class="w-full mb-2 border rounded-lg px-3 py-2" />
+        <input type="password" id="loginPassword" placeholder="كلمة المرور" class="w-full mb-2 border rounded-lg px-3 py-2" />
+        <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">تسجيل الدخول</button>
+        <p id="loginError" class="text-red-600 mt-2 hidden">❌ بيانات الدخول غير صحيحة</p>
+      </div>
+    </section>
     <section id="dashboardSection">
       <div id="dashboard"></div>
       <div id="traineesTableSection" class="mt-4"></div>
     </section>
-
-    <!-- التقارير -->
     <section id="reportsSection" style="display: none;">
       <div class="bg-white p-4 rounded-lg shadow">
         <h2 class="text-xl font-bold mb-3">📊 تقارير الدفعات الشهرية</h2>
@@ -65,14 +60,10 @@
               <th class="px-2 py-2">تفاصيل</th>
             </tr>
           </thead>
-          <tbody id="reportsTableBody">
-            <!-- سيتم ملؤه ديناميكيا -->
-          </tbody>
+          <tbody id="reportsTableBody"></tbody>
         </table>
       </div>
     </section>
-
-    <!-- الإعدادات -->
     <section id="settingsSection" style="display: none;">
       <div class="bg-white p-4 rounded-lg shadow">
         <h2 class="text-xl font-bold mb-3">⚙️ إعدادات المؤسسة</h2>
@@ -99,18 +90,10 @@
         </form>
       </div>
     </section>
-
   </main>
-
-  <!-- مودال المتربص -->
   <div id="traineeModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden"></div>
-
-  <!-- سكريبت النظام -->
   <script src="app.js"></script>
-
-  <!-- سكريبت إضافي اختياري: تحميل الإعدادات -->
   <script>
-    // تحميل بيانات الإعدادات لعرضها
     const school = JSON.parse(localStorage.getItem('schoolSettings')) || {};
     document.getElementById('schoolName').value = school.name || '';
     document.getElementById('schoolAddress').value = school.address || '';
@@ -128,9 +111,7 @@
       localStorage.setItem('schoolSettings', JSON.stringify(updated));
       alert('✅ تم حفظ الإعدادات بنجاح.');
     };
-
-    // بدء تشغيل النظام
-    renderDashboard();
   </script>
+  <script src="script.js"></script>
 </body>
 </html>
