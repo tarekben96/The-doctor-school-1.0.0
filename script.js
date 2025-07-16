@@ -20,6 +20,7 @@ function showSection(sectionId) {
 
     if (sectionId === 'dashboardSection') {
         document.getElementById('traineesTableSection').style.display = '';
+        renderDashboard(); // ✅ ضروري لإظهار البيانات
     } else {
         document.getElementById('traineesTableSection').style.display = 'none';
     }
@@ -28,7 +29,6 @@ function showSection(sectionId) {
         renderReports();
     }
 }
-
 // ================ عرض لوحة التحكم ===================
 function renderDashboard() {
     const dashboard = document.getElementById('dashboard');
