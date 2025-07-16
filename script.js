@@ -115,11 +115,19 @@ function updateTraineesTable() {
             <td class="px-2 py-2">${t.paidAmount.toLocaleString()} دج</td>
             <td class="px-2 py-2">${t.remainingAmount.toLocaleString()} دج</td>
             <td class="px-2 py-2">${t.status}</td>
-            <td class="px-2 py-2">
-                <button class="text-blue-600" onclick="editTrainee('${t.id}')"><i class="fas fa-edit"></i></button>
-                <button class="text-red-600" onclick="deleteTrainee('${t.id}')"><i class="fas fa-trash-alt"></i></button>
+            <td class="px-2 py-2 flex gap-2">
+                <button class="text-blue-600 hover:text-blue-800" onclick="editTrainee('${t.id}')" title="تعديل">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="text-red-600 hover:text-red-800" onclick="deleteTrainee('${t.id}')" title="حذف">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button class="text-green-600 hover:text-green-800" onclick="printReceipt('${t.id}')" title="طباعة وصل">
+                    <i class="fas fa-print"></i>
+                </button>
             </td>
-        `;
+`;
+
         tbody.appendChild(tr);
     });
 }
