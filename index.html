@@ -42,10 +42,18 @@
     <div id="settingsSection" class="hidden">
       <h2 class="text-xl font-bold mb-4">إعدادات المؤسسة</h2>
       <form id="schoolSettingsForm" class="max-w-md bg-white p-4 rounded-lg shadow">
-        <label class="block mb-2">اسم المؤسسة:<input type="text" id="schoolName" class="w-full border rounded px-3 py-2" required></label>
-        <label class="block mb-2">العنوان:<input type="text" id="schoolAddress" class="w-full border rounded px-3 py-2" required></label>
-        <label class="block mb-2">الهاتف:<input type="text" id="schoolPhone" class="w-full border rounded px-3 py-2" required></label>
-        <label class="block mb-4">البريد الإلكتروني:<input type="email" id="schoolEmail" class="w-full border rounded px-3 py-2" required></label>
+        <label class="block mb-2">اسم المؤسسة:
+          <input type="text" id="schoolName" class="w-full border rounded px-3 py-2" required>
+        </label>
+        <label class="block mb-2">العنوان:
+          <input type="text" id="schoolAddress" class="w-full border rounded px-3 py-2" required>
+        </label>
+        <label class="block mb-2">الهاتف:
+          <input type="text" id="schoolPhone" class="w-full border rounded px-3 py-2" required>
+        </label>
+        <label class="block mb-4">البريد الإلكتروني:
+          <input type="email" id="schoolEmail" class="w-full border rounded px-3 py-2" required>
+        </label>
         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">حفظ</button>
       </form>
     </div>
@@ -57,29 +65,18 @@
   <!-- ربط ملف الجافاسكريبت -->
   <script src="script.js"></script>
   <script>
-    function showSection(sectionId) {
-      const sections = ['dashboardSection', 'reportsSection', 'settingsSection'];
-      sections.forEach(id => {
-        document.getElementById(id).style.display = (id === sectionId) ? '' : 'none';
-      });
-      // إظهار جدول المتربصين عند العودة إلى لوحة التحكم
-      if (sectionId === 'dashboardSection') {
-        document.getElementById('traineesTableSection').style.display = '';
-      }
-    }
-
     // تحميل البيانات عند فتح الصفحة
     window.onload = function() {
       renderDashboard();
       showSection('dashboardSection');
 
-      // تحميل إعدادات المؤسسة
+      // تحميل إعدادات المؤسسة في نموذج الإعدادات
       document.getElementById('schoolName').value = schoolSettings.name;
       document.getElementById('schoolAddress').value = schoolSettings.address;
       document.getElementById('schoolPhone').value = schoolSettings.phone;
       document.getElementById('schoolEmail').value = schoolSettings.email;
 
-      // حفظ الإعدادات
+      // حفظ الإعدادات عند الضغط على زر "حفظ"
       document.getElementById('schoolSettingsForm').onsubmit = function(e) {
         e.preventDefault();
         schoolSettings.name = document.getElementById('schoolName').value.trim();
@@ -88,8 +85,26 @@
         schoolSettings.email = document.getElementById('schoolEmail').value.trim();
         localStorage.setItem('schoolSettings', JSON.stringify(schoolSettings));
         alert('تم حفظ إعدادات المؤسسة بنجاح');
-      };
-    };
+      }
+    }
+
+    // تحديث دالة showSection لتفعيل التقارير
+    function showSection(sectionId) {
+      document.getElementById('dashboardSection').style.display = 'none';
+      document.getElementById('reportsSection').style.display = 'none';
+      document.getElementById('settingsSection').style.display = 'none';
+      document.getElementById('traineesTableSection').style.display = 'none';
+
+      document.getElementById(sectionId).style.display = '';
+      
+      if (sectionId === 'dashboardSection') {
+        document.getElementById('traineesTableSection').style.display = '';
+      }
+
+      if (sectionId === 'reportsSection') {
+        renderReports(); // لحل المشكلة
+      }
+    }
   </script>
 </body>
 </html>
