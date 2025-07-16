@@ -22,6 +22,7 @@
       <h1 class="text-2xl font-bold">📚 مدرسة الدكاترة - نظام إدارة المتربصين</h1>
     </div>
   </header>
+
   <nav class="bg-white shadow mb-4">
     <div class="container mx-auto px-4 py-2 flex gap-3">
       <button onclick="showSection('dashboardSection')" class="text-indigo-700 hover:underline">لوحة التحكم</button>
@@ -30,6 +31,7 @@
       <button onclick="handleLogout()" class="text-red-600 ml-auto hover:underline">تسجيل الخروج</button>
     </div>
   </nav>
+
   <main class="container mx-auto px-4">
     <section id="loginSection" style="display: none;">
       <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
@@ -40,9 +42,11 @@
         <p id="loginError" class="text-red-600 mt-2 hidden">❌ بيانات الدخول غير صحيحة</p>
       </div>
     </section>
+
     <section id="dashboardSection" class="hidden">
-    <div id="dashboard"></div>
+      <div id="dashboard"></div>
     </section>
+
     <section id="reportsSection" style="display: none;">
       <div class="bg-white p-4 rounded-lg shadow">
         <h2 class="text-xl font-bold mb-3">📊 تقارير الدفعات الشهرية</h2>
@@ -63,6 +67,7 @@
         </table>
       </div>
     </section>
+
     <section id="settingsSection" style="display: none;">
       <div class="bg-white p-4 rounded-lg shadow">
         <h2 class="text-xl font-bold mb-3">⚙️ إعدادات المؤسسة</h2>
@@ -90,8 +95,15 @@
       </div>
     </section>
   </main>
+
   <div id="traineeModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden"></div>
+
+  <!-- أولاً: تحميل script.js لأنه يحتوي على renderDashboard -->
+  <script src="script.js"></script>
+
+  <!-- ثانياً: ثم app.js لأنه يعتمد على الدوال الموجودة في script.js -->
   <script src="app.js"></script>
+
   <script>
     const school = JSON.parse(localStorage.getItem('schoolSettings')) || {};
     document.getElementById('schoolName').value = school.name || '';
@@ -111,6 +123,5 @@
       alert('✅ تم حفظ الإعدادات بنجاح.');
     };
   </script>
-  <script src="script.js"></script>
 </body>
 </html>
