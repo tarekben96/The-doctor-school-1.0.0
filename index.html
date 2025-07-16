@@ -1,52 +1,136 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>عرض بيانات المتربصين</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
-    <style>
-        body {
-            font-family: 'Tajawal', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f0f0f0;
-        }
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #1e40af;
-            margin-bottom: 20px;
-        }
-        #dashboard {
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نظام إدارة المتربصين - مدرسة الدكاترة</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+    }
+    .print-only { display: none; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <h1>عرض بيانات المتربصين</h1>
-        <div id="dashboard"></div>
-        <div id="traineeModal" class="hidden"></div>
+<body class="bg-gray-100 text-gray-800">
 
-        <!-- أقسام مخفية لتفعيلها عند الضغط -->
-        <div id="dashboardSection" style="display: block;"></div>
-        <div id="reportsSection" style="display: none;"></div>
-        <div id="settingsSection" style="display: none;"></div>
-        <div id="traineesTableSection" style="display: none;"></div>
+  <!-- رأس الصفحة -->
+  <header class="bg-indigo-700 text-white py-4 shadow">
+    <div class="container mx-auto px-4">
+      <h1 class="text-2xl font-bold">📚 مدرسة الدكاترة - نظام إدارة المتربصين</h1>
     </div>
+  </header>
 
-    <script src="app.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            renderDashboard();
-            showSection("dashboardSection");
-        });
-    </script>
+  <!-- قائمة التنقل -->
+  <nav class="bg-white shadow mb-4">
+    <div class="container mx-auto px-4 py-2 flex gap-3">
+      <button onclick="showSection('dashboardSection')" class="text-indigo-700 hover:underline">لوحة التحكم</button>
+      <button onclick="showSection('reportsSection')" class="text-indigo-700 hover:underline">التقارير</button>
+      <button onclick="showSection('settingsSection')" class="text-indigo-700 hover:underline">الإعدادات</button>
+    </div>
+  </nav>
+
+  <!-- الأقسام -->
+  <main class="container mx-auto px-4">
+
+    <!-- لوحة التحكم -->
+    <section id="dashboardSection">
+      <div id="dashboard"></div>
+      <div id="traineesTableSection" class="mt-4"></div>
+    </section>
+
+    <!-- التقارير -->
+    <section id="reportsSection" style="display: none;">
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-3">📊 تقارير الدفعات الشهرية</h2>
+        <table class="w-full text-sm border border-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-2 py-2">#</th>
+              <th class="px-2 py-2">الشهر/السنة</th>
+              <th class="px-2 py-2">عدد المتربصين</th>
+              <th class="px-2 py-2">المطلوب</th>
+              <th class="px-2 py-2">المدفوع</th>
+              <th class="px-2 py-2">المتبقي</th>
+              <th class="px-2 py-2">النسبة المدفوعة</th>
+              <th class="px-2 py-2">تفاصيل</th>
+            </tr>
+          </thead>
+          <tbody id="reportsTableBody">
+            <!-- سيتم ملؤه ديناميكيا -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- الإعدادات -->
+    <section id="settingsSection" style="display: none;">
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-3">⚙️ إعدادات المؤسسة</h2>
+        <form id="settingsForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-1">اسم المؤسسة</label>
+            <input type="text" id="schoolName" class="w-full border rounded-lg px-3 py-2" required />
+          </div>
+          <div>
+            <label class="block mb-1">العنوان</label>
+            <input type="text" id="schoolAddress" class="w-full border rounded-lg px-3 py-2" />
+          </div>
+          <div>
+            <label class="block mb-1">الهاتف</label>
+            <input type="text" id="schoolPhone" class="w-full border rounded-lg px-3 py-2" />
+          </div>
+          <div>
+            <label class="block mb-1">البريد الإلكتروني</label>
+            <input type="email" id="schoolEmail" class="w-full border rounded-lg px-3 py-2" />
+          </div>
+          <div class="md:col-span-2 flex justify-end mt-4">
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">💾 حفظ الإعدادات</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- مودال المتربص -->
+  <div id="traineeModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden"></div>
+
+  <!-- سكريبت النظام -->
+  <script src="app.js"></script>
+
+  <!-- سكريبت إضافي اختياري: تحميل الإعدادات -->
+  <script>
+    // تحميل بيانات الإعدادات لعرضها
+    const school = JSON.parse(localStorage.getItem('schoolSettings')) || {};
+    document.getElementById('schoolName').value = school.name || '';
+    document.getElementById('schoolAddress').value = school.address || '';
+    document.getElementById('schoolPhone').value = school.phone || '';
+    document.getElementById('schoolEmail').value = school.email || '';
+
+    document.getElementById('settingsForm').onsubmit = function (e) {
+      e.preventDefault();
+      let updated = {
+        name: document.getElementById('schoolName').value.trim(),
+        address: document.getElementById('schoolAddress').value.trim(),
+        phone: document.getElementById('schoolPhone').value.trim(),
+        email: document.getElementById('schoolEmail').value.trim()
+      };
+      localStorage.setItem('schoolSettings', JSON.stringify(updated));
+      alert('✅ تم حفظ الإعدادات بنجاح.');
+    };
+
+    // بدء تشغيل النظام
+    renderDashboard();
+  </script>
 </body>
 </html>
