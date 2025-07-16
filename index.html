@@ -1,86 +1,84 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة دفعات المتربصين - مدرسة الدكاترة</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>نظام إدارة المتربصين</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hidden { display: none; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+  </style>
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen flex flex-col">
-     <!-- Header -->
-        <header class="bg-gradient-to-r from-purple-800 to-indigo-700 text-white shadow-lg">
-            <div class="container mx-auto px-4 py-6">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="text-center md:text-right mb-4 md:mb-0 flex items-center">
-                        <div class="mr-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 class="text-3xl font-bold">مدرسة الدكاترة - تبسة</h1>
-                            <p class="text-indigo-200">نظام إدارة دفعات المتربصين</p>
-                        </div>
-                    </div>
-                    <div class="flex flex-row gap-2 mt-2 md:mt-0">
-                        <button id="renderDashboard" class="nav-btn bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
-                            <i class="fas fa-tachometer-alt ml-1"></i> لوحة التحكم
-                        </button>
-                        <button id="showReportsBtn" class="nav-btn bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
-                            <i class="fas fa-chart-bar ml-1"></i> التقارير
-                        </button>
-                        <button id="showSettingsBtn" class="nav-btn bg-white text-indigo-800 px-4 py-2 rounded-lg shadow hover:bg-indigo-50 transition">
-                            <i class="fas fa-cog ml-1"></i> الإعدادات
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>    <!-- قسم التقارير (يظهر عند الضغط على زر التقارير) -->
-    <div id="reportsSection" style="display:none;">
-      <h2>التقارير</h2>
-      <div style="color:#666;">هنا ستظهر تقارير الدفع وإحصائيات المتربصين.</div>
-    </div>
-    
-    <!-- قسم الإعدادات (يظهر عند الضغط على زر الإعدادات) -->
-    <div id="settingsSection" style="display:none;">
-      <h2>الإعدادات</h2>
-      <div style="color:#666;">يمكنك هنا ضبط بيانات المؤسسة، تعديل الأسعار، ...إلخ.</div>
+<body class="bg-gray-100 text-gray-800">
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4 text-center text-indigo-700">نظام إدارة المتربصين - مدرسة الدكاترة</h1>
+
+    <!-- أزرار التنقل -->
+    <div class="flex justify-center gap-4 mb-6">
+      <button onclick="showSection('dashboardSection')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">لوحة التحكم</button>
+      <button onclick="showSection('reportsSection')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">التقارير</button>
+      <button onclick="showSection('settingsSection')" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">إعدادات المؤسسة</button>
     </div>
 
-    <!-- جدول المتربصين (في لوحة التحكم) -->
-    <div id="traineesTableSection" style="margin-top:28px;display:none;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;">
-        <h2 style="margin:0;">قائمة المتربصين</h2>
-        <button id="addTraineeBtn" style="background:#059669;"><i class="fas fa-user-plus"></i> إضافة متربص</button>
-      </div>
-      <table id="traineesTable">
-        <thead>
-          <tr>
-            <th>رقم</th>
-            <th>رقم التسجيل</th>
-            <th>الاسم</th>
-            <th>التخصص</th>
-            <th>الشهر</th>
-            <th>المبلغ المطلوب</th>
-            <th>المدفوع</th>
-            <th>المتبقي</th>
-            <th>الحالة</th>
-            <th>إجراءات</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- تُملأ ديناميكياً بواسطة script.js -->
-        </tbody>
-      </table>
+    <!-- لوحة التحكم -->
+    <div id="dashboardSection">
+      <div id="dashboard"></div>
+      <div id="traineesTableSection"></div>
     </div>
+
+    <!-- قسم التقارير -->
+    <div id="reportsSection" class="hidden">
+      <h2 class="text-xl font-bold mb-4">التقارير الشهرية</h2>
+      <div id="reportsTableContainer" class="overflow-x-auto"></div>
+    </div>
+
+    <!-- قسم الإعدادات -->
+    <div id="settingsSection" class="hidden">
+      <h2 class="text-xl font-bold mb-4">إعدادات المؤسسة</h2>
+      <form id="schoolSettingsForm" class="max-w-md bg-white p-4 rounded-lg shadow">
+        <label class="block mb-2">اسم المؤسسة:<input type="text" id="schoolName" class="w-full border rounded px-3 py-2" required></label>
+        <label class="block mb-2">العنوان:<input type="text" id="schoolAddress" class="w-full border rounded px-3 py-2" required></label>
+        <label class="block mb-2">الهاتف:<input type="text" id="schoolPhone" class="w-full border rounded px-3 py-2" required></label>
+        <label class="block mb-4">البريد الإلكتروني:<input type="email" id="schoolEmail" class="w-full border rounded px-3 py-2" required></label>
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">حفظ</button>
+      </form>
+    </div>
+
+    <!-- نافذة منبثقة -->
+    <div id="traineeModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden"></div>
   </div>
-  <!-- نافذة منبثقة عامة (تعديل، إضافة، طباعة...) -->
-  <div id="traineeModal" class="hidden"></div>
 
-  <!-- تحميل السكربت -->
+  <!-- ربط ملف الجافاسكريبت -->
   <script src="script.js"></script>
+  <script>
+    // تحميل البيانات عند فتح الصفحة
+    window.onload = function() {
+      renderDashboard();
+      showSection('dashboardSection');
+
+      // تحميل إعدادات المؤسسة في نموذج الإعدادات
+      document.getElementById('schoolName').value = schoolSettings.name;
+      document.getElementById('schoolAddress').value = schoolSettings.address;
+      document.getElementById('schoolPhone').value = schoolSettings.phone;
+      document.getElementById('schoolEmail').value = schoolSettings.email;
+
+      // حفظ الإعدادات عند الضغط على زر "حفظ"
+      document.getElementById('schoolSettingsForm').onsubmit = function(e) {
+        e.preventDefault();
+        schoolSettings.name = document.getElementById('schoolName').value.trim();
+        schoolSettings.address = document.getElementById('schoolAddress').value.trim();
+        schoolSettings.phone = document.getElementById('schoolPhone').value.trim();
+        schoolSettings.email = document.getElementById('schoolEmail').value.trim();
+        localStorage.setItem('schoolSettings', JSON.stringify(schoolSettings));
+        alert('تم حفظ إعدادات المؤسسة بنجاح');
+      }
+    }
+  </script>
 </body>
 </html>
