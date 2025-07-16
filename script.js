@@ -12,19 +12,6 @@ let schoolSettings = JSON.parse(localStorage.getItem('schoolSettings')) || {
 const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
 // ================ تهيئة الصفحة والتنقل بين الأقسام ================
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('dashboardBtn').onclick = function() {
-        showSection('dashboardSection');
-    };
-    document.getElementById('reportsBtn').onclick = function() {
-        showSection('reportsSection');
-    };
-    document.getElementById('settingsBtn').onclick = function() {
-        showSection('settingsSection');
-    };
-    // أظهر لوحة التحكم افتراضيًا
-    showSection('dashboardSection');
-});
 
 function showSection(sectionId) {
     // أخفِ كل الأقسام أولاً
