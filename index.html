@@ -25,7 +25,7 @@
 
   <nav class="bg-white shadow mb-4">
     <div class="container mx-auto px-4 py-2 flex gap-3">
-      <button onclick="showSection('renderDashboard')" class="text-indigo-700 hover:underline">لوحة التحكم</button>
+      <button onclick="showSection('dashboardSection')" class="text-indigo-700 hover:underline">لوحة التحكم</button>
       <button onclick="showSection('reportsSection')" class="text-indigo-700 hover:underline">التقارير</button>
       <button onclick="showSection('settingsSection')" class="text-indigo-700 hover:underline">الإعدادات</button>
       <button onclick="handleLogout()" class="text-red-600 ml-auto hover:underline">تسجيل الخروج</button>
@@ -98,30 +98,10 @@
 
   <div id="traineeModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden"></div>
 
-  <!-- أولاً: تحميل script.js لأنه يحتوي على renderDashboard -->
+  <!-- أولاً: تحميل script.js لأنه يحتوي على وظائف العرض والإعدادات -->
   <script src="script.js"></script>
 
-  <!-- ثانياً: ثم app.js لأنه يعتمد على الدوال الموجودة في script.js -->
+  <!-- ثانياً: تحميل app.js (للدخول والمزيد لاحقًا) -->
   <script src="app.js"></script>
-
-  <script>
-    const school = JSON.parse(localStorage.getItem('schoolSettings')) || {};
-    document.getElementById('schoolName').value = school.name || '';
-    document.getElementById('schoolAddress').value = school.address || '';
-    document.getElementById('schoolPhone').value = school.phone || '';
-    document.getElementById('schoolEmail').value = school.email || '';
-
-    document.getElementById('settingsForm').onsubmit = function (e) {
-      e.preventDefault();
-      let updated = {
-        name: document.getElementById('schoolName').value.trim(),
-        address: document.getElementById('schoolAddress').value.trim(),
-        phone: document.getElementById('schoolPhone').value.trim(),
-        email: document.getElementById('schoolEmail').value.trim()
-      };
-      localStorage.setItem('schoolSettings', JSON.stringify(updated));
-      alert('✅ تم حفظ الإعدادات بنجاح.');
-    };
-  </script>
 </body>
 </html>
