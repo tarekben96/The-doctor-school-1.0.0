@@ -4,21 +4,90 @@ body {
     font-family: 'Tajawal', sans-serif;
     background-color: #f8fafc;
     direction: rtl;
+    margin: 0;
+    padding: 0;
+    color: #1f2937;
 }
 
-.print-only { display: none; }
+.print-only {
+    display: none;
+}
+
 @media print {
-    .no-print { display: none !important; }
-    .print-only { display: block; }
-    body { background-color: white; }
+    .no-print {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    body {
+        background-color: white;
+    }
+
+    table {
+        page-break-inside: avoid;
+    }
 }
+
 .modal-bg {
-    position: fixed; z-index: 50; inset: 0;
-    background: rgba(0,0,0,0.3);
-    display: flex; align-items: center; justify-content: center;
+    position: fixed;
+    z-index: 50;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 input, select, button, textarea {
     font-family: inherit;
+    outline: none;
 }
-::-webkit-scrollbar {width: 7px;}
-::-webkit-scrollbar-thumb {background: #e6e6e6; border-radius: 7px;}
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 7px;
+}
+
+/* أزرار */
+button {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ترويسة وجداول */
+table th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+}
+
+/* تحسين مظهر عناصر النموذج */
+input, select, textarea {
+    border: 1px solid #d1d5db;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+/* طباعة الوصل */
+.receipt-print {
+    font-family: 'Tajawal', sans-serif;
+    direction: rtl;
+    margin: 24px auto;
+    width: 700px;
+    color: #000;
+}
+
+.receipt-print table {
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.receipt-print td {
+    padding: 4px 0;
+}
