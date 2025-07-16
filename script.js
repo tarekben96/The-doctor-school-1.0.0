@@ -13,21 +13,6 @@ const monthNames = ["", "جانفي", "فيفري", "مارس", "أفريل", "�
 
 // ================ تهيئة الصفحة والتنقل بين الأقسام ================
 
-function showSection(sectionId) {
-    // أخفِ كل الأقسام أولاً
-    document.getElementById('dashboardSection').style.display = 'none';
-    document.getElementById('reportsSection').style.display = 'none';
-    document.getElementById('settingsSection').style.display = 'none';
-    document.getElementById('traineesTableSection').style.display = 'none';
-
-    // أظهر القسم المطلوب فقط
-    
-    // إذا اخترت لوحة التحكم، أظهر الجدول أيضًا
-    if(sectionId === 'dashboardSection') {
-        document.getElementById('traineesTableSection').style.display = '';
-    }
-}
-
 // ================ لوحة التحكم ================
 function renderDashboard() {
     let html = `
